@@ -1,0 +1,3 @@
+class ConfigMain {
+    public showInput() {}
+}
