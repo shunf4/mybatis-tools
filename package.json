@@ -10,6 +10,7 @@
         "Other"
     ],
     "activationEvents": [
+        "onCommand:mybatis-tools.hello",
         "onCommand:mybatis-tools.config"
     ],
     "main": "./out/extension.js",
@@ -18,6 +19,10 @@
             {
                 "command": "mybatis-tools.config",
                 "title": "mybatis-tools config"
+            },
+            {
+                "command": "mybatis-tools.hello",
+                "title": "mybatis hello page"
             }
         ]
     },
