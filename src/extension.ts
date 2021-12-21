@@ -13,18 +13,14 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "mybatis-tools.hello",
-    () => {
-      // The code you place here will be executed every time your command is executed
+  let disposable = vscode.commands.registerCommand("mybatis-tools.hello", () => {
+    // The code you place here will be executed every time your command is executed
 
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from mybatis-tools!");
-    }
-  );
+    // Display a message box to the user
+    vscode.window.showInformationMessage("Hello World from mybatis-tools!");
+  });
 
-  let configMain = new ConfigMain();
-  context.subscriptions.push(configMain.dispose());
+  context.subscriptions.push(new ConfigMain().dispose());
   context.subscriptions.push(disposable);
 }
 
