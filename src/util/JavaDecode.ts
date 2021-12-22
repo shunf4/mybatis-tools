@@ -2,49 +2,27 @@
 class InterfaceDecode {
   interface() {}
 
-  method(javaContent: string) {
-    javaContent.replace(Constant.PATTERN_ABSTRACT_METHOD, "$1");
+  static method(javaContent: string | undefined): string[] | null {
+    if (javaContent === undefined) {
+      return null;
+    }
+    return javaContent.match(Constant.PATTERN_ABSTRACT_METHOD_NAME);
+  }
+
+  static package(javaContent: string | undefined): string[] | null {
+    if (javaContent === undefined) {
+      return null;
+    }
+    return javaContent.match(Constant.PATTERN_PACKAGE);
   }
 }
 
-class InterfaceInfo {
-  /** 全限定路径名称 */
-  type?: string;
-  shortName?: string;
-  methods?: MethodInfo[];
+export class Constant {
+  static NAME = "[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*";
+  static PATTERN_ABSTRACT_METHOD_NAME = eval(`(?<=\s+)(${Constant.NAME})(?=\s*\()`);
+  static PATTERN_PACKAGE = eval(`(?<=package\s+)(${Constant.NAME})(?=\s*;)`);
+  static PATTERN_NAME = eval(`/${Constant.NAME}/`);
 }
-
-class MethodInfo {
-  scope?: string;
-  returnType?: string;
-  methodName?: string;
-  paramInfo?: ParamInfo[];
-}
-
-class ParamInfo {
-  /** 全限定路径名称 */
-  type?: string;
-  shortName?: string;
-  paramName?: string;
-  annotation?: AnnotationInfo;
-}
-
-class AnnotationInfo {
-  /** 全限定路径名称 */
-  type?: string;
-  name?: string;
-}
-
-class Constant {
-  static ACCESS_FLAG = "public|private|protected";
-  static NAME = "[a-zA-Z0-9_$]";
-  static TYPE_NAME = "[a-zA-Z0-9_$<>]";
-
-  static PATTERN_ABSTRACT_METHOD = eval(
-    `/${Constant.ACCESS_FLAG}*\\s+${Constant.TYPE_NAME}+\\s+(${Constant.NAME}+)\\(.*\\);/`
-  );
-}
-
 
 // let ACCESS_FLAG = "public|private|protected";
 // let NAME = "[a-zA-Z0-9_$]";
@@ -56,14 +34,12 @@ class Constant {
 
 // let str1 = 'public void getUserInfo(@Param("name")String name);';
 
-
 // let str2 = 'public void getUserInfo(@Param("name")String name);' +
 //     '\n' +
 //     'List<String> listUserInfo(@Param("name")String name);';
 
-
-
-
 // console.log(str1.replace(PATTERN_ABSTRACT_METHOD, "$1"))
 
 // console.log(str2.replace(PATTERN_ABSTRACT_METHOD, "$1").split("\n"))
+
+export { InterfaceDecode };
