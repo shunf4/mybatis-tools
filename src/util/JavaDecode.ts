@@ -9,19 +9,22 @@ class InterfaceDecode {
     return javaContent.match(Constant.PATTERN_ABSTRACT_METHOD_NAME);
   }
 
-  static package(javaContent: string | undefined): string[] | null {
+  static package(javaContent: string | undefined): string | null {
     if (javaContent === undefined) {
       return null;
     }
-    return javaContent.match(Constant.PATTERN_PACKAGE);
+    let packages = javaContent.match(Constant.PATTERN_PACKAGE) || [""];
+    return packages[0];
   }
 }
 
 export class Constant {
-  static NAME = "[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*";
-  static PATTERN_ABSTRACT_METHOD_NAME = eval(`(?<=\s+)(${Constant.NAME})(?=\s*\()`);
-  static PATTERN_PACKAGE = eval(`(?<=package\s+)(${Constant.NAME})(?=\s*;)`);
-  static PATTERN_NAME = eval(`/${Constant.NAME}/`);
+  static NAME = "[\\u00C0-\\u02B8a-zA-Z_$][\\u00C0-\\u02B8a-zA-Z_$0-9]*";
+  static NAMESPACE = "[\\u00C0-\\u02B8a-zA-Z_$][\\u00C0-\\u02B8a-zA-Z_$0-9.]*";
+  static PATTERN_ABSTRACT_METHOD_NAME = new RegExp(`(?<=\\s+)(${Constant.NAME})(?=\\s*\\()`, "g");
+  static PATTERN_PACKAGE = new RegExp(`(?<=package\\s+)(${Constant.NAMESPACE})(?=\\s*;)`, "g");
+  static PATTERN_NAME = new RegExp(`${Constant.NAME}`, "g");
+  static PATTERN_CHAR = /[\u00C0-\u02B8a-zA-Z_$0-9]/;
 }
 
 // let ACCESS_FLAG = "public|private|protected";

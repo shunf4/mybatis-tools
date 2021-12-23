@@ -15,7 +15,7 @@ export class JumperMain extends BaseCommand implements Disposable {
       this.doCommand();
     });
   }
-  doCommand() {
+  async doCommand() {
     // 1. 获取光标所处的文件和方法名称
     // 2. 如果是接口:
     // 2.1 获取文件名称, 当前的package, 组装namespace
@@ -31,31 +31,55 @@ export class JumperMain extends BaseCommand implements Disposable {
     let document = activeEditor.document;
     let curPos = activeEditor.selection.active;
     let line = document.lineAt(curPos);
-    let offset = document.offsetAt(curPos);
-    let firstCharOffset = offset - line.firstNonWhitespaceCharacterIndex;
 
     let word = "";
     let pos = 0;
-    for (let char of line.text) {
-      pos++;
-      if (!Constant.PATTERN_NAME.test(char)) {
-        word = "";
-        if (pos + firstCharOffset > offset) {
+    for (let char of line.text.trimLeft()) {
+      if (!Constant.PATTERN_CHAR.test(char)) {
+        if (pos + line.firstNonWhitespaceCharacterIndex > curPos.character) {
           break;
         }
+        pos++;
+        word = "";
         continue;
       }
+      pos++;
       word += char;
     }
 
-    let fileName = document.fileName;
-    if (fileName.endsWith("java")) {
+    let filePath = document.fileName;
+    let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
+    let fileName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+    if (fileNameWithSuffix.endsWith("java")) {
       // 如果当前为java文件
       let content = document.getText();
       let packageName = InterfaceDecode.package(content);
+
       let namespace = packageName + "." + fileName;
-      console.log("获取文本信息: ", packageName, namespace, word);
-    } else if (fileName?.endsWith("xml")) {
+      // 获取xml路径
+      let mapperMapping = await MapperMappingContext.getMapperMappingByOtherFile(fileNameWithSuffix, namespace);
+      console.log("获取文本信息: ", packageName, namespace, word, mapperMapping.xmlPath);
+      // 匹配xml中该方法位置
+      if (mapperMapping.xmlPath) {
+        vscode.workspace.openTextDocument(mapperMapping.xmlPath).then(async (doc) => {
+          let wordIndexAtLine = -1;
+          let lineNumber = 0;
+          for (; lineNumber < doc.lineCount; lineNumber++) {
+            let lineText = doc.lineAt(lineNumber);
+            wordIndexAtLine = lineText.text.indexOf(word);
+            if (wordIndexAtLine !== -1) {
+              break;
+            }
+          }
+
+          let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
+          console.log("匹配xml中该方法位置", word, pos.line, pos.character);
+          await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+            editor.selection = new vscode.Selection(pos, pos);
+          });
+        });
+      }
+    } else if (fileNameWithSuffix.endsWith("xml")) {
       // 如果当前文件为xml文件
     }
   }

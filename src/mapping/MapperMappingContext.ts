@@ -1,3 +1,4 @@
+import { resolve } from "dns";
 import { XMLParser } from "fast-xml-parser";
 import * as vscode from "vscode";
 
@@ -85,9 +86,59 @@ export class MapperMappingContext {
     return `映射数量: ${size}`;
   }
 
-  static async getMapperMapping(namespace: string) {
-    return MapperMappingContext.mapperMappingMap.get(namespace);
+  /**
+   * 通过命名空间查找映射结果
+   * 首先从缓存中获取
+   * 获取不到进行全查找
+   * @param namespace
+   * @returns
+   */
+  static async getMapperMapping(namespace: string): Promise<MapperMapping> {
+    // 从缓存中获取
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+
+    if (mapperMappingValue) {
+      return new Promise(() => mapperMappingValue);
+    }
+    // 缓存中不存在查找所有xml文件 进行匹配获取
+    // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
+    let files = await vscode.workspace.findFiles("**/*.xml");
+    for (const file of files) {
+      let isSuccess = await MapperMappingContext.registryMapperXmlFile(file);
+      mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+      if (mapperMappingValue) {
+        return new Promise<MapperMapping>((resolve) => {
+          resolve(mapperMappingValue || new MapperMapping(namespace));
+        });
+      }
+    }
+    return new Promise<MapperMapping>((resolve) => {
+      resolve(mapperMappingValue || new MapperMapping(namespace));
+    });
   }
+
+  /**
+   * 根据文件名 命名空间 查找
+   * @param fileName
+   * @param namespace
+   * @returns
+   */
+  static async getMapperMappingByOtherFile(fileName: string, namespace: string): Promise<MapperMapping> {
+    let path = fileName.endsWith(".xml") ? fileName : fileName.substring(0, fileName.lastIndexOf(".")) + ".xml";
+    let files = await vscode.workspace.findFiles("**/" + path);
+    for (const file of files) {
+      let isSuccess = await MapperMappingContext.registryMapperXmlFile(file);
+      let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+      if (mapperMappingValue) {
+        return new Promise<MapperMapping>((resolve) => {
+          resolve(mapperMappingValue || new MapperMapping(namespace));
+        });
+      }
+    }
+    return MapperMappingContext.getMapperMapping(namespace);
+  }
+
+  static async reload() {}
 }
 
 class MapperMapping {
