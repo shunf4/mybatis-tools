@@ -33,7 +33,7 @@ export class ConfigMain extends BaseCommand implements Disposable {
         let files = await vscode.workspace.findFiles(basePath);
 
         for (const file of files) {
-          let isSuccess = await MapperMappingContext.registryMapperXmlFile(file);
+          await MapperMappingContext.registryMapperXmlFile(file);
         }
         MapperMappingContext.printMapperMappingMap();
         vscode.window.showInformationMessage("nice~ 映射关系加载完成!" + MapperMappingContext.summeryInfo());

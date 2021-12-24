@@ -29,8 +29,46 @@ export class JumperMain extends BaseCommand implements Disposable {
       return;
     }
     let document = activeEditor.document;
+    let word = this.findWordAroundCursor(activeEditor);
+
+    let filePath = document.fileName;
+    let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
+    let fileName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+
+    if (fileNameWithSuffix.endsWith("java")) {
+      // 如果当前为java文件
+      let content = document.getText();
+      let packageName = InterfaceDecode.package(content);
+
+      let namespace = packageName + "." + fileName;
+      // 获取xml路径
+      let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(fileNameWithSuffix, namespace);
+      console.log("获取文本信息: ", packageName, namespace, word, mapperMapping.xmlPath);
+      // 匹配xml中该方法位置
+      if (mapperMapping.xmlPath) {
+        this.jump(mapperMapping.xmlPath, word);
+      }
+    } else if (fileNameWithSuffix.endsWith("xml")) {
+      // 如果当前文件为xml文件
+      let mapperMapping = await MapperMappingContext.registryMapperXmlFile(document.uri);
+      if (mapperMapping && mapperMapping.javaPath) {
+        this.jump(mapperMapping.javaPath, word);
+      }
+    }
+  }
+
+  /**
+   * 查找光标所处位置的单词
+   *
+   * @param activeEditor 当前打开的文件
+   * @returns
+   */
+  findWordAroundCursor(activeEditor: vscode.TextEditor): string {
+    let document = activeEditor.document;
     let curPos = activeEditor.selection.active;
     let line = document.lineAt(curPos);
+    // todo zx 判断光标不存在的情况
+    // todo zx 临界值的判断 光标位于单词前 单词后
 
     let word = "";
     let pos = 0;
@@ -46,41 +84,31 @@ export class JumperMain extends BaseCommand implements Disposable {
       pos++;
       word += char;
     }
+    return word;
+  }
 
-    let filePath = document.fileName;
-    let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
-    let fileName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
-    if (fileNameWithSuffix.endsWith("java")) {
-      // 如果当前为java文件
-      let content = document.getText();
-      let packageName = InterfaceDecode.package(content);
-
-      let namespace = packageName + "." + fileName;
-      // 获取xml路径
-      let mapperMapping = await MapperMappingContext.getMapperMappingByOtherFile(fileNameWithSuffix, namespace);
-      console.log("获取文本信息: ", packageName, namespace, word, mapperMapping.xmlPath);
-      // 匹配xml中该方法位置
-      if (mapperMapping.xmlPath) {
-        vscode.workspace.openTextDocument(mapperMapping.xmlPath).then(async (doc) => {
-          let wordIndexAtLine = -1;
-          let lineNumber = 0;
-          for (; lineNumber < doc.lineCount; lineNumber++) {
-            let lineText = doc.lineAt(lineNumber);
-            wordIndexAtLine = lineText.text.indexOf(word);
-            if (wordIndexAtLine !== -1) {
-              break;
-            }
-          }
-
-          let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
-          console.log("匹配xml中该方法位置", word, pos.line, pos.character);
-          await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
-            editor.selection = new vscode.Selection(pos, pos);
-          });
-        });
+  /**
+   * 跳转到指定文件 指定单词的位置
+   * @param path
+   * @param word
+   */
+  jump(path: vscode.Uri, word: string) {
+    vscode.workspace.openTextDocument(path).then(async (doc) => {
+      let wordIndexAtLine = -1;
+      let lineNumber = 0;
+      for (; lineNumber < doc.lineCount; lineNumber++) {
+        let lineText = doc.lineAt(lineNumber);
+        wordIndexAtLine = lineText.text.indexOf(word);
+        if (wordIndexAtLine !== -1) {
+          break;
+        }
       }
-    } else if (fileNameWithSuffix.endsWith("xml")) {
-      // 如果当前文件为xml文件
-    }
+
+      let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
+      console.log("匹配文件中该方法位置", path.path, word, pos.line, pos.character);
+      await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+        editor.selection = new vscode.Selection(pos, pos);
+      });
+    });
   }
 }

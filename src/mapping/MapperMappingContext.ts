@@ -41,34 +41,37 @@ export class MapperMappingContext {
    * 将xml字符串解析为MapperMapping对象, 并将其注册到MapperMappingContext中
    * how to use xpath-ts: {@link https://www.npmjs.com/package/xpath-ts }
    * @param xmlContent xml字符串
-   * @returns 是否解析成功
+   * @returns 返回当前文件的namespace
    */
-  static async registryMapperXmlFile(file: vscode.Uri): Promise<boolean> {
+  static async registryMapperXmlFile(file: vscode.Uri): Promise<MapperMapping | null> {
     let readData = await vscode.workspace.fs.readFile(file);
     let xmlContent = Buffer.from(readData).toString("utf8");
 
     const parser = new XMLParser(MapperMappingContext.options);
     let mapperObject = parser.parse(xmlContent);
     if (mapperObject === undefined || !mapperObject) {
-      return false;
+      return new Promise<null>((resolve) => {
+        resolve(null);
+      });
     }
     if (mapperObject.mapper === undefined || !mapperObject.mapper) {
-      return false;
+      return new Promise<null>((resolve) => {
+        resolve(null);
+      });
     }
-    console.log(mapperObject.mapper);
     let namespace = mapperObject.mapper["@_namespace"];
     let mapperMapping = new MapperMapping(namespace);
     mapperMapping.xmlPath = vscode.Uri.parse(file.path);
-    // todo zx record methods in xml
 
     let relativePath = this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
     let files = await vscode.workspace.findFiles(relativePath);
     if (files && files.length > 0) {
       mapperMapping.javaPath = files[0];
-      // todo zx record methods in java
     }
     MapperMappingContext.registryMapperMapping(mapperMapping);
-    return true;
+    return new Promise<MapperMapping>((resolve) => {
+      resolve(mapperMapping);
+    });
   }
 
   private static async registryMapperMapping(mapperMapping: MapperMapping) {
@@ -104,7 +107,7 @@ export class MapperMappingContext {
     // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
     let files = await vscode.workspace.findFiles("**/*.xml");
     for (const file of files) {
-      let isSuccess = await MapperMappingContext.registryMapperXmlFile(file);
+      await MapperMappingContext.registryMapperXmlFile(file);
       mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
       if (mapperMappingValue) {
         return new Promise<MapperMapping>((resolve) => {
@@ -118,16 +121,16 @@ export class MapperMappingContext {
   }
 
   /**
-   * 根据文件名 命名空间 查找
+   * 根据java文件名 命名空间 查找
    * @param fileName
    * @param namespace
    * @returns
    */
-  static async getMapperMappingByOtherFile(fileName: string, namespace: string): Promise<MapperMapping> {
+  static async getMapperMappingByJavaFile(fileName: string, namespace: string): Promise<MapperMapping> {
     let path = fileName.endsWith(".xml") ? fileName : fileName.substring(0, fileName.lastIndexOf(".")) + ".xml";
     let files = await vscode.workspace.findFiles("**/" + path);
     for (const file of files) {
-      let isSuccess = await MapperMappingContext.registryMapperXmlFile(file);
+      await MapperMappingContext.registryMapperXmlFile(file);
       let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
       if (mapperMappingValue) {
         return new Promise<MapperMapping>((resolve) => {
