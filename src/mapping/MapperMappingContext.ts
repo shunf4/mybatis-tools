@@ -50,14 +50,10 @@ export class MapperMappingContext {
     const parser = new XMLParser(MapperMappingContext.options);
     let mapperObject = parser.parse(xmlContent);
     if (mapperObject === undefined || !mapperObject) {
-      return new Promise<null>((resolve) => {
-        resolve(null);
-      });
+      return null;
     }
     if (mapperObject.mapper === undefined || !mapperObject.mapper) {
-      return new Promise<null>((resolve) => {
-        resolve(null);
-      });
+      return null;
     }
     let namespace = mapperObject.mapper["@_namespace"];
     let mapperMapping = new MapperMapping(namespace);
@@ -69,9 +65,7 @@ export class MapperMappingContext {
       mapperMapping.javaPath = files[0];
     }
     MapperMappingContext.registryMapperMapping(mapperMapping);
-    return new Promise<MapperMapping>((resolve) => {
-      resolve(mapperMapping);
-    });
+    return mapperMapping;
   }
 
   private static async registryMapperMapping(mapperMapping: MapperMapping) {
@@ -101,7 +95,7 @@ export class MapperMappingContext {
     let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
 
     if (mapperMappingValue) {
-      return new Promise(() => mapperMappingValue);
+      return mapperMappingValue;
     }
     // 缓存中不存在查找所有xml文件 进行匹配获取
     // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
@@ -110,14 +104,10 @@ export class MapperMappingContext {
       await MapperMappingContext.registryMapperXmlFile(file);
       mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
       if (mapperMappingValue) {
-        return new Promise<MapperMapping>((resolve) => {
-          resolve(mapperMappingValue || new MapperMapping(namespace));
-        });
+        return mapperMappingValue || new MapperMapping(namespace);
       }
     }
-    return new Promise<MapperMapping>((resolve) => {
-      resolve(mapperMappingValue || new MapperMapping(namespace));
-    });
+    return mapperMappingValue || new MapperMapping(namespace);
   }
 
   /**
@@ -133,9 +123,7 @@ export class MapperMappingContext {
       await MapperMappingContext.registryMapperXmlFile(file);
       let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
       if (mapperMappingValue) {
-        return new Promise<MapperMapping>((resolve) => {
-          resolve(mapperMappingValue || new MapperMapping(namespace));
-        });
+        return mapperMappingValue || new MapperMapping(namespace);
       }
     }
     return MapperMappingContext.getMapperMapping(namespace);
