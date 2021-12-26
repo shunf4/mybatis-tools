@@ -6,6 +6,8 @@ import * as vscode from "vscode";
  * <p>mapper mapping 上下文
  * 目前只进行接口<-->xml的缓存.
  * 方法的缓存在实际打开文件进行跳转时处理.
+ * 
+ * 进行方法缓存意义不大，反而会造成加载缓慢 因此目前不做处理
  */
 export class MapperMappingContext {
   private static prefixSearch = "**/";

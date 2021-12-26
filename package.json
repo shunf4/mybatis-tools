@@ -3,7 +3,7 @@
     "displayName": "mybatis-tools",
     "description": "tools for mybatis",
     "publisher": "nikolazhang",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "repository": {
         "url": "https://gitee.com/NikolaZhang/mybatis-tools.git",
         "type": "git"
@@ -15,24 +15,31 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:mybatis-tools.hello",
         "onCommand:mybatis-tools.config",
         "onCommand:mybatis-tools.jumper"
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "keybindings": [
+            {
+                "command": "mybatis-tools.config",
+                "key": "ctrl+m ctrl+c",
+                "when": "editorTextFocus"
+            },
+            {
+            "command": "mybatis-tools.jumper",
+                "key": "ctrl+m ctrl+j",
+                "when": "editorTextFocus"
+            }
+        ],
         "commands": [
             {
                 "command": "mybatis-tools.config",
-                "title": "mybatis-tools config"
-            },
-            {
-                "command": "mybatis-tools.hello",
-                "title": "mybatis hello page"
+                "title": "当前项目namespace加载"
             },
             {
                 "command": "mybatis-tools.jumper",
-                "title": "mybatis jumper"
+                "title": "mybatis 方法跳转"
             }
         ]
     },

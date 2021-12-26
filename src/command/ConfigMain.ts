@@ -3,6 +3,11 @@ import * as vscode from "vscode";
 import { BaseCommand } from "./BaseCommand";
 import { MapperMappingContext } from "../mapping/MapperMappingContext";
 
+/**
+ * 使用mybatis-tools.config 命令加载项目中的xml文件与接口文件的映射关系。
+ * 
+ * 最终的加载结果会存放到 {@link MapperMappingContext} 上下文中
+ */
 export class ConfigMain extends BaseCommand implements Disposable {
   constructor() {
     super();

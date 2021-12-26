@@ -1,4 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+/**
+ * 最初的想法是写一个java文件解析的方法（或者是第三方的）
+ * 但是后来想了一下，这与插件的功能相差甚远。
+ * 因此直接根据正则表达式进行提取。
+ */
 class InterfaceDecode {
   interface() {}
 
