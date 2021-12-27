@@ -1,6 +1,9 @@
+import { DatabaseType } from "./../format/BaseParameterTypeHandler";
+import { ParameterType } from "./../../.history/src/format/BaseParameterTypeHandler_20211227202207";
 import { Disposable, InputBoxOptions } from "vscode";
 import * as vscode from "vscode";
 import { BaseCommand } from "./BaseCommand";
+import { ParameterTypeHandleFactory } from "../format/BaseParameterTypeHandler";
 
 export class LogFormatMain extends BaseCommand implements Disposable {
   /** 动态sql前缀 */
@@ -20,12 +23,13 @@ export class LogFormatMain extends BaseCommand implements Disposable {
   }
 
   async doCommand() {
+    // 获取当前工作空间的数据库类型
     // 获取剪贴板数据
     // 右键获取选中的数据
   }
 
   private getClipboardData() {
-    vscode.env.clipboard.readText().then((res) => {
+    vscode.env.clipboard.readText().then(res => {
       if (res) {
       } else {
         vscode.window.showErrorMessage("没有复制mybatis日志");
@@ -53,7 +57,8 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     for (let dynamicSql of dynamicSqls) {
       let dynamicSqlSymbolCount = (dynamicSql.match(/\?/g) || []).length;
       if (dynamicSqlSymbolCount > 0) {
-        let parameter = parameterArr[parameterSymbolCount.indexOf(dynamicSqlSymbolCount)];
+        let parameter =
+          parameterArr[parameterSymbolCount.indexOf(dynamicSqlSymbolCount)];
       }
     }
 
@@ -66,22 +71,31 @@ export class LogFormatMain extends BaseCommand implements Disposable {
   }
 
   private formatSql(dynamicSql: string, parameter: string) {
-    let trimmedDynamicSql = dynamicSql.substring(dynamicSql.indexOf(this.dynamicSqlPrefix) + this.dynamicSqlPrefix.length).trim();
-    let trimmedParameter = parameter.substring(parameter.indexOf(this.parameterPrefix) + this.parameterPrefix.length).trim();
+    let trimmedDynamicSql = dynamicSql
+      .substring(
+        dynamicSql.indexOf(this.dynamicSqlPrefix) + this.dynamicSqlPrefix.length
+      )
+      .trim();
+    let trimmedParameter = parameter
+      .substring(
+        parameter.indexOf(this.parameterPrefix) + this.parameterPrefix.length
+      )
+      .trim();
 
     let params = parameter.split(",");
 
-    let dbType = vscode.workspace.getConfiguration("mybatis-tools").get<string>("database");
-    if (dbType) {
-    } else {
-      // todo zx get database config
-    }
+    let dbType =
+      vscode.workspace
+        .getConfiguration("mybatis-tools")
+        .get<DatabaseType>("database") || DatabaseType.MYSQL;
+    let handler = ParameterTypeHandleFactory.build(dbType);
 
     for (let param of params) {
       let value = (/\w+(?=\s*\(\s*\w+\s*\))/.exec(param) || [""])[0];
       let type = (/(?<=\w+\s*\(\s*)\w+(?=\s*\)))/.exec(param) || [""])[0];
+      let result = handler.formatParam(type, value);
+      trimmedDynamicSql = trimmedDynamicSql.replace("?", result);
     }
-
-    dynamicSql.replace("?", "");
+    return trimmedDynamicSql;
   }
 }

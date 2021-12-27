@@ -1,3 +1,5 @@
+import { OracleParameterTypeHandler } from "./OracleParameterTypeHandler";
+import { MysqlParameterTypeHandler } from "./MysqlParameterTypeHandler";
 /* eslint-disable @typescript-eslint/naming-convention */
 export enum ParameterType {
   INTEGER = "Integer",
@@ -8,12 +10,45 @@ export enum ParameterType {
   DATE = "Date",
   TIMESTAMP = "Timestamp",
   STRING = "String",
-  NULL = "null",
+  NULL = "null"
+}
+
+export enum DatabaseType {
+  MYSQL,
+  ORACLE
+}
+
+export class ParameterTypeHandleFactory {
+  /**
+   * 根据数据库类型获取参数解析对象
+   * @param databaseType
+   * @returns
+   */
+  static build(databaseType: DatabaseType): BaseParameterTypeHandler {
+    let handler;
+    switch (databaseType) {
+      case DatabaseType.MYSQL:
+        handler = new MysqlParameterTypeHandler();
+        break;
+      case DatabaseType.ORACLE:
+        handler = new OracleParameterTypeHandler();
+        break;
+      default:
+        handler = new MysqlParameterTypeHandler();
+    }
+    return handler;
+  }
 }
 
 export abstract class BaseParameterTypeHandler {
   formatParam(type: string, value: string): string {
-    if (type === ParameterType.INTEGER || type === ParameterType.LONG || type === ParameterType.DOUBLE || type === ParameterType.FLOAT || type === ParameterType.DECIMAL) {
+    if (
+      type === ParameterType.INTEGER ||
+      type === ParameterType.LONG ||
+      type === ParameterType.DOUBLE ||
+      type === ParameterType.FLOAT ||
+      type === ParameterType.DECIMAL
+    ) {
       return this.formatNumber(value);
     }
     if (type === ParameterType.STRING) {
