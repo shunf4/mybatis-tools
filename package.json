@@ -20,6 +20,7 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "menus": {},
         "keybindings": [
             {
                 "command": "mybatis-tools.config",
@@ -27,8 +28,13 @@
                 "when": "editorTextFocus"
             },
             {
-            "command": "mybatis-tools.jumper",
+                "command": "mybatis-tools.jumper",
                 "key": "ctrl+m ctrl+j",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "mybatis-tools.log-format",
+                "key": "ctrl+m ctrl+f",
                 "when": "editorTextFocus"
             }
         ],
@@ -40,6 +46,10 @@
             {
                 "command": "mybatis-tools.jumper",
                 "title": "mybatis 方法跳转"
+            },
+            {
+                "command": "mybatis-tools.log-format",
+                "title": "mybatis日志参数填充"
             }
         ]
     },
