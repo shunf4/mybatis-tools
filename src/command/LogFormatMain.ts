@@ -1,20 +1,20 @@
 import { BaseParameterTypeHandler, DatabaseType, getDataBaseTypes } from "./../format/BaseParameterTypeHandler";
-import { Disposable, InputBoxOptions } from "vscode";
+import { Disposable } from "vscode";
 import * as vscode from "vscode";
 import { BaseCommand } from "./BaseCommand";
-import { ParameterTypeHandleFactory } from "../format/BaseParameterTypeHandler";
+import { ParameterTypeHandleFactory } from "../format/ParameterTypeHandleFactory";
 
 export class LogFormatMain extends BaseCommand implements Disposable {
   /** 动态sql前缀 */
   private dynamicSqlPrefix = "Preparing:";
   /** 参数前缀 */
-  private parameterPrefix = "Parameter:";
+  private parameterPrefix = "Parameters:";
   /** 动态sql前缀 */
-  private dynamicSqlRegex = /Preparing:(.*)/;
+  private dynamicSqlRegex = /Preparing:.*/;
   /** 参数前缀 */
-  private parameterRegex = /Parameter:(.*)/;
+  private parameterRegex = /Parameters:.*/;
 
-  dispose() {
+  dispose(): any {
     let cmd = LogFormatMain.getCommand("log-format");
     return vscode.commands.registerCommand(cmd, () => {
       this.doCommand();
@@ -22,24 +22,27 @@ export class LogFormatMain extends BaseCommand implements Disposable {
   }
 
   async doCommand() {
-    // 获取当前工作空间的数据库类型
-    // 右键获取选中的数据
-    // 获取剪贴板数据
-    this.getClipboardData();
+    // 从剪贴板获取sql日志
+    let res = await this.getClipboardData();
+
+    if (res) {
+      let result = await this.logFormat(res);
+      // 新建一个文件, 将转换后的文本写入
+      let document = await vscode.workspace.openTextDocument({
+        content: result.join("\n"),
+        language: "sql",
+      });
+      vscode.window.showTextDocument(document, 1, false);
+    } else {
+      vscode.window.showErrorMessage("没有复制mybatis日志");
+    }
   }
 
   /**
    * 获取剪贴板中数据
    */
-  private getClipboardData() {
-    vscode.env.clipboard.readText().then((res) => {
-      if (res) {
-        let result = this.logFormat(res);
-        console.log("转换结果: ", result);
-      } else {
-        vscode.window.showErrorMessage("没有复制mybatis日志");
-      }
-    });
+  private async getClipboardData(): Promise<string> {
+    return await vscode.env.clipboard.readText();
   }
 
   private getSelectedData() {}
@@ -54,11 +57,12 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     let dbType = vscode.workspace.getConfiguration("mybatis-tools").get<DatabaseType>("database");
     if (!dbType) {
       dbType = ((await vscode.window.showQuickPick(getDataBaseTypes())) as DatabaseType) || DatabaseType.MYSQL;
+      // vscode.workspace.getConfiguration("mybatis-tools").update("database", dbType);
     }
 
     let handler = ParameterTypeHandleFactory.build(dbType);
 
-    logStr = logStr.substring(logStr.indexOf("dynamicSqlPrefix"));
+    logStr = logStr.substring(logStr.indexOf(this.dynamicSqlPrefix));
 
     let dynamicSqls = logStr.match(this.dynamicSqlRegex) || [];
     let parameterArr = logStr.match(this.parameterRegex) || [];
@@ -76,6 +80,7 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     for (let dynamicSql of dynamicSqls) {
       let dynamicSqlSymbolCount = (dynamicSql.match(/\?/g) || []).length;
       if (dynamicSqlSymbolCount > 0) {
+        // 匹配当前sql对应长度的参数
         let parameter = parameterArr[parameterSymbolCount.indexOf(dynamicSqlSymbolCount)];
         sqls.push(await this.formatSql(handler, dynamicSql, parameter));
       } else {
@@ -100,8 +105,14 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     let params = trimmedParameter.split(",");
 
     for (let param of params) {
-      let value = (/\w+(?=\s*\(\s*\w+\s*\))/.exec(param) || [""])[0];
-      let type = (/(?<=\w+\s*\(\s*)\w+(?=\s*\)))/.exec(param) || [""])[0];
+      let type = (/(?<=\s*\w+\()\w+(?=\))/.exec(param) || [""])[0];
+      let value;
+      if (type) {
+        // 开头非空格并且结尾为括号
+        value = (/(?<=\s*)\S+.*(?=\(\w+\))/.exec(param) || param.trim())[0];
+      } else {
+        value = param.trim();
+      }
       let result = handler.formatParam(type, value);
       trimmedDynamicSql = trimmedDynamicSql.replace("?", result);
     }

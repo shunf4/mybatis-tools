@@ -1,6 +1,8 @@
-import { OracleParameterTypeHandler } from "./OracleParameterTypeHandler";
-import { MysqlParameterTypeHandler } from "./MysqlParameterTypeHandler";
 /* eslint-disable @typescript-eslint/naming-convention */
+
+/**
+ * mybatis中使用的参数类型
+ */
 export enum ParameterType {
   INTEGER = "Integer",
   LONG = "Long",
@@ -10,44 +12,33 @@ export enum ParameterType {
   DATE = "Date",
   TIMESTAMP = "Timestamp",
   STRING = "String",
+  // 日志中空的格式为 null, 没有指定类型
   NULL = "null",
 }
 
+/**
+ * 数据库类型 目前支持mysql oracle
+ */
 export enum DatabaseType {
   MYSQL = "mysql",
   ORACLE = "oracle",
 }
 
+/**
+ * 获取数据库类型枚举值数组 用于前端进行选择
+ * @returns
+ */
 export function getDataBaseTypes(): string[] {
   let types: string[] = [];
-  Object.keys(DatabaseType).forEach((key) => {
-    types.push(key);
+  Object.values(DatabaseType).forEach((value) => {
+    types.push(value);
   });
   return types;
 }
 
-export class ParameterTypeHandleFactory {
-  /**
-   * 根据数据库类型获取参数解析对象
-   * @param databaseType
-   * @returns
-   */
-  static build(databaseType: DatabaseType): BaseParameterTypeHandler {
-    let handler;
-    switch (databaseType) {
-      case DatabaseType.MYSQL:
-        handler = new MysqlParameterTypeHandler();
-        break;
-      case DatabaseType.ORACLE:
-        handler = new OracleParameterTypeHandler();
-        break;
-      default:
-        handler = new MysqlParameterTypeHandler();
-    }
-    return handler;
-  }
-}
-
+/**
+ * <p>基类 类型处理器, 将参数值转换为sql中该参数的样式
+ */
 export abstract class BaseParameterTypeHandler {
   formatParam(type: string, value: string): string {
     if (type === ParameterType.INTEGER || type === ParameterType.LONG || type === ParameterType.DOUBLE || type === ParameterType.FLOAT || type === ParameterType.DECIMAL) {
@@ -65,19 +56,33 @@ export abstract class BaseParameterTypeHandler {
     return value;
   }
 
-  formatNumber(value: string) {
+  // ~ ------------------------------------------------------------
+  // 以下方法需要在子类中根据不同数据库格式进行实现
+  // ~ ------------------------------------------------------------
+
+  protected formatNumber(value: string) {
     return value;
   }
 
-  formatString(value: string) {
-    return `"${value}"`;
+  protected formatString(value: string) {
+    return `'${value}'`;
   }
 
-  formatDate(value: string) {
-    return `"${value}"`;
+  /**
+   * u'd better overwrite this method at subclasses
+   * @param value
+   * @returns
+   */
+  protected formatDate(value: string) {
+    return `'${value}'`;
   }
 
-  formatTimestamp(value: string) {
-    return `"${value}"`;
+  /**
+   * u'd better overwrite this method at subclasses
+   * @param value
+   * @returns
+   */
+  protected formatTimestamp(value: string) {
+    return this.formatDate(value);
   }
 }

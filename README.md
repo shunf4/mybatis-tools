@@ -2,16 +2,15 @@
 
 mybatis 框架工具集
 
-> 虽然我建议你优先选择`MybatisX`这个插件, 但是我使用的时候, `MybatisX`一直在初始化.... 384s之后才初始化完成.  
-之后当前java接口文件可以跳转了, 但换了个新的接口就又不行了~~ 
-我醉了. 我只想查看当前文件方法的跳转啊! 然后我就写了这款插件.
+> 虽然我建议你优先选择`MybatisX`这个插件, 但是我使用的时候, 感觉不好用, 然后我就写了这款插件.
 
 ## Features
 
 - 方法跳转支持  
   从java方法跳转到xml动态sql  
   从xml跳转到java方法.
-- 不存在对应的java方法, 或者动态sql, 此时会提示三种选项:
+- 不存在对应的java方法, 或者动态sql, 允许自动创建.  
+  此时会提示三种选项:
   1. `直接跳转到文件`
   2. `不跳转`
   3. `创建方法或者动态sql`(创建位置为末尾)
@@ -23,11 +22,11 @@ mybatis 框架工具集
 
 所有命令均为`mybatis-tools`作为分组前缀. 以下所有快捷键均为组合键.(当然`ctrl+shift+p`, 之后输入命令也是可以的)
 
-| 命令                       | 快捷键        | 含义                                                                         |
-| :------------------------- | :------------ | :--------------------------------------------------------------------------- |
-| `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的 xml配置, 使用该命令后, 如果之后调整过文件位置需要重新执行该命令 |
-| `mybatis-tools.jumper`     | ctrl+m ctrl+j | 跳转功能, 当光标位于方法单词上, 使用该命令即可                               |
-| `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: Preparing, Parameter |
+| 命令                       | 快捷键        | 含义                                                                                |
+| :------------------------- | :------------ | :---------------------------------------------------------------------------------- |
+| `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的 xml配置, 使用该命令后, 如果之后调整过文件位置需要重新执行该命令        |
+| `mybatis-tools.jumper`     | ctrl+m ctrl+j | 跳转功能, 当光标位于方法单词上, 使用该命令即可                                      |
+| `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: `Preparing:`, `Parameters:` |
 
 ## Extension Settings
 
@@ -72,7 +71,6 @@ fix bugs:
 Initial release of mybatis-tools, this version only for test.
 
 -----------------------------------------------------------------------------------------------------------
-
 
 ### For more information
 

@@ -9,9 +9,6 @@ import { MapperMappingContext } from "../mapping/MapperMappingContext";
  * 最终的加载结果会存放到 {@link MapperMappingContext} 上下文中
  */
 export class ConfigMain extends BaseCommand implements Disposable {
-  constructor() {
-    super();
-  }
 
   dispose(): any {
     let cmd = ConfigMain.getCommand("config");

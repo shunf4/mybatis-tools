@@ -26,5 +26,7 @@ console.log(getDataBaseTypeValues());
 console.log(DatabaseType["MYSQL"]);
 console.log(<DatabaseType>"MYSQL" === DatabaseType.MYSQL);
 console.log(DatabaseType["MYSQL"] === DatabaseType.MYSQL);
+console.log("MYSQL" as DatabaseType);
+console.log("mysql" as DatabaseType);
 
 console.log(DatabaseType.MYSQL);

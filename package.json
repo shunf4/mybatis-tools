@@ -2,7 +2,7 @@
     "name": "mybatis-tools",
     "displayName": "mybatis-tools",
     "description": "tools for mybatis",
-    "publisher": "nikolazhang",
+    "publisher": "nikola zhang",
     "version": "0.0.2",
     "repository": {
         "url": "https://gitee.com/NikolaZhang/mybatis-tools.git",
@@ -16,11 +16,11 @@
     ],
     "activationEvents": [
         "onCommand:mybatis-tools.config",
-        "onCommand:mybatis-tools.jumper"
+        "onCommand:mybatis-tools.jumper",
+        "onCommand:mybatis-tools.log-format"
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "menus": {},
         "keybindings": [
             {
                 "command": "mybatis-tools.config",
