@@ -10,12 +10,20 @@ export enum ParameterType {
   DATE = "Date",
   TIMESTAMP = "Timestamp",
   STRING = "String",
-  NULL = "null"
+  NULL = "null",
 }
 
 export enum DatabaseType {
-  MYSQL,
-  ORACLE
+  MYSQL = "mysql",
+  ORACLE = "oracle",
+}
+
+export function getDataBaseTypes(): string[] {
+  let types: string[] = [];
+  Object.keys(DatabaseType).forEach((key) => {
+    types.push(key);
+  });
+  return types;
 }
 
 export class ParameterTypeHandleFactory {
@@ -42,13 +50,7 @@ export class ParameterTypeHandleFactory {
 
 export abstract class BaseParameterTypeHandler {
   formatParam(type: string, value: string): string {
-    if (
-      type === ParameterType.INTEGER ||
-      type === ParameterType.LONG ||
-      type === ParameterType.DOUBLE ||
-      type === ParameterType.FLOAT ||
-      type === ParameterType.DECIMAL
-    ) {
+    if (type === ParameterType.INTEGER || type === ParameterType.LONG || type === ParameterType.DOUBLE || type === ParameterType.FLOAT || type === ParameterType.DECIMAL) {
       return this.formatNumber(value);
     }
     if (type === ParameterType.STRING) {
@@ -60,6 +62,7 @@ export abstract class BaseParameterTypeHandler {
     if (type === ParameterType.TIMESTAMP) {
       return this.formatTimestamp(value);
     }
+    return value;
   }
 
   formatNumber(value: string) {

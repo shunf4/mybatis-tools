@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import { ConfigMain } from "./command/ConfigMain";
 import { JumperMain } from "./command/JumperMain";
+import { LogFormatMain } from "./command/LogFormatMain";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -11,8 +12,12 @@ export function activate(context: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "mybatis-tools" is now active!');
 
+  // 映射配置加载
   context.subscriptions.push(new ConfigMain().dispose());
+  // 跳转
   context.subscriptions.push(new JumperMain().dispose());
+  // 日志格式化
+  context.subscriptions.push(new LogFormatMain().dispose());
 }
 
 // this method is called when your extension is deactivated

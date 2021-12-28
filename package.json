@@ -49,7 +49,7 @@
             },
             {
                 "command": "mybatis-tools.log-format",
-                "title": "mybatis日志参数填充"
+                "title": "mybatis日志格式化"
             }
         ]
     },
