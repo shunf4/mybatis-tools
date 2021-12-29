@@ -6,7 +6,7 @@ import * as vscode from "vscode";
  * <p>mapper mapping 上下文
  * 目前只进行接口<-->xml的缓存.
  * 方法的缓存在实际打开文件进行跳转时处理.
- * 
+ *
  * 进行方法缓存意义不大，反而会造成加载缓慢 因此目前不做处理
  */
 export class MapperMappingContext {
@@ -119,6 +119,10 @@ export class MapperMappingContext {
    * @returns
    */
   static async getMapperMappingByJavaFile(fileName: string, namespace: string): Promise<MapperMapping> {
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+    if (mapperMappingValue) {
+      return mapperMappingValue || new MapperMapping(namespace);
+    }
     let path = fileName.endsWith(".xml") ? fileName : fileName.substring(0, fileName.lastIndexOf(".")) + ".xml";
     let files = await vscode.workspace.findFiles("**/" + path);
     for (const file of files) {

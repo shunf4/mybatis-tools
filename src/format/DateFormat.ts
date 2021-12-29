@@ -1,4 +1,3 @@
-import { stringify } from "querystring";
 import { DatabaseType } from "./BaseParameterTypeHandler";
 
 export class DateFormat {

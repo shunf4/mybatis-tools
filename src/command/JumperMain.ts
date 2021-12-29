@@ -40,10 +40,7 @@ export class JumperMain extends BaseCommand implements Disposable {
 
     let filePath = document.fileName;
     let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
-    let fileName = filePath.substring(
-      filePath.lastIndexOf("\\") + 1,
-      filePath.lastIndexOf(".")
-    );
+    let fileName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
 
     if (fileNameWithSuffix.endsWith("java")) {
       // 如果当前为java文件
@@ -52,17 +49,8 @@ export class JumperMain extends BaseCommand implements Disposable {
 
       let namespace = packageName + "." + fileName;
       // 获取xml路径
-      let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(
-        fileNameWithSuffix,
-        namespace
-      );
-      console.log(
-        "获取文本信息: ",
-        packageName,
-        namespace,
-        word,
-        mapperMapping.xmlPath
-      );
+      let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(fileNameWithSuffix, namespace);
+      console.log("获取文本信息: ", packageName, namespace, word, mapperMapping.xmlPath);
       // 匹配xml中该方法位置
       if (mapperMapping.xmlPath) {
         this.jump(mapperMapping.xmlPath, word, this.doWhenNotMatchXml);
@@ -71,9 +59,7 @@ export class JumperMain extends BaseCommand implements Disposable {
       }
     } else if (fileNameWithSuffix.endsWith("xml")) {
       // 如果当前文件为xml文件
-      let mapperMapping = await MapperMappingContext.registryMapperXmlFile(
-        document.uri
-      );
+      let mapperMapping = await MapperMappingContext.registryMapperXmlFile(document.uri);
       if (mapperMapping && mapperMapping.javaPath) {
         this.jump(mapperMapping.javaPath, word, this.doWhenNotMatchJava);
       } else {
@@ -115,15 +101,8 @@ export class JumperMain extends BaseCommand implements Disposable {
    * @param word
    * @param doWhenNotMatch
    */
-  jump(
-    path: vscode.Uri,
-    word: string,
-    doWhenNotMatch?: (
-      document: vscode.TextDocument,
-      word: string
-    ) => Promise<AddContent | null>
-  ) {
-    vscode.workspace.openTextDocument(path).then(async doc => {
+  jump(path: vscode.Uri, word: string, doWhenNotMatch?: (document: vscode.TextDocument, word: string) => Promise<AddContent | null>) {
+    vscode.workspace.openTextDocument(path).then(async (doc) => {
       let wordIndexAtLine = -1;
       let lineNumber = 0;
       for (; lineNumber < doc.lineCount; lineNumber++) {
@@ -137,27 +116,18 @@ export class JumperMain extends BaseCommand implements Disposable {
       // 没有匹配到文本
       if (wordIndexAtLine === -1 && doWhenNotMatch) {
         let addContent = await doWhenNotMatch(doc, word);
-        vscode.window.showTextDocument(doc, 1, false).then(editor => {
-          vscode.window.activeTextEditor?.edit(edit => {
+        vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+          vscode.window.activeTextEditor?.edit((edit) => {
             if (addContent) {
               edit.insert(addContent.position, addContent.content);
             }
           });
         });
       } else {
-        let pos = new vscode.Position(
-          lineNumber,
-          wordIndexAtLine === -1 ? 0 : wordIndexAtLine
-        );
-        console.log(
-          "匹配文件中该方法位置",
-          path.path,
-          word,
-          pos.line,
-          pos.character
-        );
-        await vscode.window.showTextDocument(doc, 1, false).then(editor => {
-          editor.selection = new vscode.Selection(pos, pos);
+        let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
+        console.log("匹配文件中该方法位置", path.path, word, pos.line, pos.character);
+        await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+          editor.selection = new vscode.Selection(pos, new vscode.Position(pos.line, pos.character + word.length));
         });
       }
     });
@@ -168,23 +138,17 @@ export class JumperMain extends BaseCommand implements Disposable {
    * @param doc
    * @param word
    */
-  async doWhenNotMatchXml(
-    doc: vscode.TextDocument,
-    word: string
-  ): Promise<AddContent | null> {
-    let res = await vscode.window.showQuickPick(
-      ["jump directly", "stay here", "create statement"],
-      {
-        canPickMany: false,
-        title: "cannot find sql in xml, so next to do?"
-      }
-    );
+  async doWhenNotMatchXml(doc: vscode.TextDocument, word: string): Promise<AddContent | null> {
+    let res = await vscode.window.showQuickPick(["jump directly", "stay here", "create statement"], {
+      canPickMany: false,
+      title: "cannot find sql in xml, so next to do?",
+    });
     if (!res || res === "stay here") {
       return null;
     }
     if (res === "jump directly") {
       let pos = new vscode.Position(0, 0);
-      vscode.window.showTextDocument(doc, 1, false).then(editor => {
+      vscode.window.showTextDocument(doc, 1, false).then((editor) => {
         editor.selection = new vscode.Selection(pos, pos);
       });
       return null;
@@ -200,24 +164,18 @@ export class JumperMain extends BaseCommand implements Disposable {
    * @param doc
    * @param word
    */
-  async doWhenNotMatchJava(
-    doc: vscode.TextDocument,
-    word: string
-  ): Promise<AddContent | null> {
-    let res = await vscode.window.showQuickPick(
-      ["jump directly", "stay here", "create abstract method"],
-      {
-        canPickMany: false,
-        title: "cannot find method in interface, so next to do?"
-      }
-    );
+  async doWhenNotMatchJava(doc: vscode.TextDocument, word: string): Promise<AddContent | null> {
+    let res = await vscode.window.showQuickPick(["jump directly", "stay here", "create abstract method"], {
+      canPickMany: false,
+      title: "cannot find method in interface, so next to do?",
+    });
 
     if (!res || res === "stay here") {
       return null;
     }
     if (res === "jump directly") {
       let pos = new vscode.Position(0, 0);
-      vscode.window.showTextDocument(doc, 1, false).then(editor => {
+      vscode.window.showTextDocument(doc, 1, false).then((editor) => {
         editor.selection = new vscode.Selection(pos, pos);
       });
       return null;
