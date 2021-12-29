@@ -7,6 +7,8 @@ mybatis 框架工具集
 ## Features
 
 - 方法跳转支持  
+  > 当光标位于接口方法或者sql id单词上, 使用快捷键或命令.
+  
   从java方法跳转到xml动态sql  
   从xml跳转到java方法.
 - 不存在对应的java方法, 或者动态sql, 允许自动创建.  
@@ -15,7 +17,9 @@ mybatis 框架工具集
   2. `不跳转`
   3. `创建方法或者动态sql`(创建位置为末尾)
 - 日志格式化(目前支持MYSQL, ORACLE, 默认为MYSQL)  
-  将参数填充到动态sql中, 并且允许多个sql填充.  
+  > 首先复制要转换的sql日志. 使用快捷键或者命令.
+  
+  将参数填充到动态sql中, 并且允许多个sql填充. 转换结果会写入到一个新打开的文件中.  
   注意多线程情况下, sql的输出并不是顺序的, 此时插件会按照参数个数进行匹配(当然可能不是正确的). 所以尽量还是单个sql转换, 或者有顺序的多个sql转换为好.
 
 ### 命令
@@ -34,11 +38,11 @@ mybatis 框架工具集
 
 ```json
 
-mybatis-tools: {
-    datasourceType: "MYSQL"
-}
+"mybatis-tools.databaseType": "mysql",
 
 ```
+
+注意: 目前支持mysql, oracle
 
 ## Known Issues
 

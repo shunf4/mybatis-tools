@@ -1,4 +1,5 @@
-import { BaseParameterTypeHandler } from "./BaseParameterTypeHandler";
+import { BaseParameterTypeHandler, DatabaseType } from "./BaseParameterTypeHandler";
+import { DateFormat } from "./DateFormat";
 
 export class OracleParameterTypeHandler extends BaseParameterTypeHandler {
   /**
@@ -6,6 +7,7 @@ export class OracleParameterTypeHandler extends BaseParameterTypeHandler {
    * @returns
    */
   protected formatDate(value: string) {
-    return `'${value}'`;
+    let format = DateFormat.match(value, DatabaseType.ORACLE);
+    return `to_date('${value}', '${format}')`;
   }
 }

@@ -1,4 +1,5 @@
-import { BaseParameterTypeHandler } from "./BaseParameterTypeHandler";
+import { BaseParameterTypeHandler, DatabaseType } from "./BaseParameterTypeHandler";
+import { DateFormat } from "./DateFormat";
 
 export class MysqlParameterTypeHandler extends BaseParameterTypeHandler {
   /**
@@ -6,6 +7,7 @@ export class MysqlParameterTypeHandler extends BaseParameterTypeHandler {
    * @returns
    */
   protected formatDate(value: string) {
-    return `'${value}'`;
+    let format = DateFormat.match(value, DatabaseType.MYSQL);
+    return `date_format('${value}', '${format}')`;
   }
 }

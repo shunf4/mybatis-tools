@@ -4,15 +4,18 @@ import * as vscode from "vscode";
 import { BaseCommand } from "./BaseCommand";
 import { ParameterTypeHandleFactory } from "../format/ParameterTypeHandleFactory";
 
+/**
+ * 日志参数填充
+ */
 export class LogFormatMain extends BaseCommand implements Disposable {
   /** 动态sql前缀 */
   private dynamicSqlPrefix = "Preparing:";
   /** 参数前缀 */
   private parameterPrefix = "Parameters:";
   /** 动态sql前缀 */
-  private dynamicSqlRegex = /Preparing:.*/;
+  private dynamicSqlRegex = /(?<=Preparing:).*/g;
   /** 参数前缀 */
-  private parameterRegex = /Parameters:.*/;
+  private parameterRegex = /(?<=Parameters:).*/g;
 
   dispose(): any {
     let cmd = LogFormatMain.getCommand("log-format");
@@ -29,7 +32,7 @@ export class LogFormatMain extends BaseCommand implements Disposable {
       let result = await this.logFormat(res);
       // 新建一个文件, 将转换后的文本写入
       let document = await vscode.workspace.openTextDocument({
-        content: result.join("\n"),
+        content: result.join(";\n\n"),
         language: "sql",
       });
       vscode.window.showTextDocument(document, 1, false);
@@ -54,37 +57,56 @@ export class LogFormatMain extends BaseCommand implements Disposable {
    */
   private async logFormat(logStr: string): Promise<string[]> {
     // 获取数据库类型
-    let dbType = vscode.workspace.getConfiguration("mybatis-tools").get<DatabaseType>("database");
+    let dbType = vscode.workspace.getConfiguration("mybatis-tools").get<DatabaseType>("databaseType");
     if (!dbType) {
       dbType = ((await vscode.window.showQuickPick(getDataBaseTypes())) as DatabaseType) || DatabaseType.MYSQL;
-      // vscode.workspace.getConfiguration("mybatis-tools").update("database", dbType);
     }
 
     let handler = ParameterTypeHandleFactory.build(dbType);
 
     logStr = logStr.substring(logStr.indexOf(this.dynamicSqlPrefix));
-
     let dynamicSqls = logStr.match(this.dynamicSqlRegex) || [];
     let parameterArr = logStr.match(this.parameterRegex) || [];
-
     let dynamicSqlSymbolCount: Number[] = [];
     let parameterSymbolCount: Number[] = [];
     dynamicSqls.forEach((value, index) => {
-      dynamicSqlSymbolCount.push((value.match(/\?/g) || []).length);
+      let count = (value.match(/\?/g) || []).length;
+      dynamicSqlSymbolCount.push(count);
     });
     parameterArr.forEach((value, index) => {
-      parameterSymbolCount.push((value.match(/,/g) || []).length + 1);
+      if (!value || value.trim() === "") {
+        parameterSymbolCount.push(0);
+      } else {
+        let count = (value.match(/,/g) || []).length;
+        parameterSymbolCount.push(count + 1);
+      }
     });
 
     let sqls: string[] = [];
-    for (let dynamicSql of dynamicSqls) {
-      let dynamicSqlSymbolCount = (dynamicSql.match(/\?/g) || []).length;
-      if (dynamicSqlSymbolCount > 0) {
-        // 匹配当前sql对应长度的参数
-        let parameter = parameterArr[parameterSymbolCount.indexOf(dynamicSqlSymbolCount)];
-        sqls.push(await this.formatSql(handler, dynamicSql, parameter));
-      } else {
+    for (let [index, dynamicSql] of dynamicSqls.entries()) {
+      let symbolCount = dynamicSqlSymbolCount[index];
+      if (dynamicSqlSymbolCount[index] <= 0) {
         sqls.push(dynamicSql);
+        continue;
+      }
+      // 从当前索引匹配当前sql对应长度的参数
+      let parameter = "";
+      let parameterIndex = parameterSymbolCount.slice(index).indexOf(symbolCount);
+      if (parameterIndex !== -1) {
+        parameter = parameterArr[index + parameterIndex];
+      }
+
+      if (parameterIndex === -1) {
+        // 向前查找
+        parameterIndex = parameterSymbolCount.slice(0, index).reverse().indexOf(symbolCount);
+        parameter = parameterArr[index - 1 - parameterIndex];
+      }
+
+      if (parameterIndex === -1) {
+        sqls.push(dynamicSql);
+        continue;
+      } else {
+        sqls.push(await this.formatSql(handler, dynamicSql, parameter));
       }
     }
     return sqls;
@@ -98,11 +120,9 @@ export class LogFormatMain extends BaseCommand implements Disposable {
    * @returns
    */
   private async formatSql(handler: BaseParameterTypeHandler, dynamicSql: string, parameter: string): Promise<string> {
-    // 去除动态sql以及参数字符串的前缀
-    let trimmedDynamicSql = dynamicSql.substring(dynamicSql.indexOf(this.dynamicSqlPrefix) + this.dynamicSqlPrefix.length).trim();
-    let trimmedParameter = parameter.substring(parameter.indexOf(this.parameterPrefix) + this.parameterPrefix.length).trim();
-
-    let params = trimmedParameter.split(",");
+    dynamicSql = dynamicSql.trim();
+    parameter = parameter.trim();
+    let params = parameter.split(",");
 
     for (let param of params) {
       let type = (/(?<=\s*\w+\()\w+(?=\))/.exec(param) || [""])[0];
@@ -114,8 +134,8 @@ export class LogFormatMain extends BaseCommand implements Disposable {
         value = param.trim();
       }
       let result = handler.formatParam(type, value);
-      trimmedDynamicSql = trimmedDynamicSql.replace("?", result);
+      dynamicSql = dynamicSql.replace("?", result);
     }
-    return trimmedDynamicSql;
+    return dynamicSql;
   }
 }

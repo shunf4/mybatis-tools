@@ -2,6 +2,7 @@
     "name": "mybatis-tools",
     "displayName": "mybatis-tools",
     "description": "tools for mybatis",
+    "icon": "images/icon.png",
     "publisher": "nikola zhang",
     "version": "0.0.2",
     "repository": {
@@ -11,6 +12,9 @@
     "engines": {
         "vscode": "^1.46.0"
     },
+    "keywords": [
+        "mybatis"
+    ],
     "categories": [
         "Other"
     ],
@@ -21,6 +25,20 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "mybatis-tools配置",
+            "properties": {
+                "mybatis-tools.databaseType": {
+                    "title": "当前工作空间数据库类型",
+                    "type": "string",
+                    "default": "mysql",
+                    "allOf": [
+                        "mysql",
+                        "oracle"
+                    ]
+                }
+            }
+        },
         "keybindings": [
             {
                 "command": "mybatis-tools.config",
