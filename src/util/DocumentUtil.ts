@@ -60,4 +60,11 @@ export class DocumentUtil {
 
     return new AddContent(prefix + method, new vscode.Position(index, 0));
   }
+
+  /**
+   * 应该排除的文件
+   */
+  static excludeFilePattern() { 
+
+  }
 }

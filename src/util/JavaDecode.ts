@@ -31,6 +31,9 @@ export class Constant {
   static PATTERN_NAME = new RegExp(`${Constant.NAME}`, "g");
   static PATTERN_CHAR = /[\u00C0-\u02B8a-zA-Z_$0-9]/;
   static PATTERN_NAMESPACE = new RegExp(`(?<=namespace\\s*\\=\\s*")${Constant.NAMESPACE}(?=")`);
+
+  static PATTERN_FILE_SCAN = "**/src/main/**/*.xml";
+  static PATTERN_FILE_SCAN_BASE = "**/src/main/**/";
 }
 
 // let ACCESS_FLAG = "public|private|protected";

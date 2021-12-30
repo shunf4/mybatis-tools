@@ -13,7 +13,7 @@ export enum ParameterType {
   TIMESTAMP = "Timestamp",
   STRING = "String",
   // 日志中空的格式为 null, 没有指定类型
-  NULL = "null",
+  NULL = "null"
 }
 
 /**
@@ -21,7 +21,7 @@ export enum ParameterType {
  */
 export enum DatabaseType {
   MYSQL = "mysql",
-  ORACLE = "oracle",
+  ORACLE = "oracle"
 }
 
 /**
@@ -30,7 +30,7 @@ export enum DatabaseType {
  */
 export function getDataBaseTypes(): string[] {
   let types: string[] = [];
-  Object.values(DatabaseType).forEach((value) => {
+  Object.values(DatabaseType).forEach(value => {
     types.push(value);
   });
   return types;
@@ -41,7 +41,13 @@ export function getDataBaseTypes(): string[] {
  */
 export abstract class BaseParameterTypeHandler {
   formatParam(type: string, value: string): string {
-    if (type === ParameterType.INTEGER || type === ParameterType.LONG || type === ParameterType.DOUBLE || type === ParameterType.FLOAT || type === ParameterType.DECIMAL) {
+    if (
+      type === ParameterType.INTEGER ||
+      type === ParameterType.LONG ||
+      type === ParameterType.DOUBLE ||
+      type === ParameterType.FLOAT ||
+      type === ParameterType.DECIMAL
+    ) {
       return this.formatNumber(value);
     }
     if (type === ParameterType.STRING) {
@@ -60,11 +66,11 @@ export abstract class BaseParameterTypeHandler {
   // 以下方法需要在子类中根据不同数据库格式进行实现
   // ~ ------------------------------------------------------------
 
-  protected formatNumber(value: string) {
+  protected formatNumber(value: string): string {
     return value;
   }
 
-  protected formatString(value: string) {
+  protected formatString(value: string): string {
     return `'${value}'`;
   }
 
@@ -73,7 +79,7 @@ export abstract class BaseParameterTypeHandler {
    * @param value
    * @returns
    */
-  protected formatDate(value: string) {
+  protected formatDate(value: string): string {
     return `'${value}'`;
   }
 
@@ -82,7 +88,7 @@ export abstract class BaseParameterTypeHandler {
    * @param value
    * @returns
    */
-  protected formatTimestamp(value: string) {
+  protected formatTimestamp(value: string): string {
     return this.formatDate(value);
   }
 }

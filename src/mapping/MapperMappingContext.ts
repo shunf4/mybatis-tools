@@ -29,14 +29,14 @@ export class MapperMappingContext {
     parseTrueNumberOnly: false,
     numParseOptions: {
       hex: true,
-      leadingZeros: true,
+      leadingZeros: true
       //skipLike: /\+[0-9]{10}/
     },
     arrayMode: false, //"strict"
     // attrValueProcessor: (val: any, attrName: any) => he.decode(val, { isAttributeValue: true }), //default is a=>a
     // tagValueProcessor: (val: any , tagName) => he.decode(val), //default is a=>a
     // stopNodes: ["parse-me-as-string"],
-    alwaysCreateTextNode: true,
+    alwaysCreateTextNode: true
   };
 
   /**
@@ -45,7 +45,9 @@ export class MapperMappingContext {
    * @param xmlContent xml字符串
    * @returns 返回当前文件的namespace
    */
-  static async registryMapperXmlFile(file: vscode.Uri): Promise<MapperMapping | null> {
+  static async registryMapperXmlFile(
+    file: vscode.Uri
+  ): Promise<MapperMapping | null> {
     let readData = await vscode.workspace.fs.readFile(file);
     let xmlContent = Buffer.from(readData).toString("utf8");
 
@@ -61,7 +63,8 @@ export class MapperMappingContext {
     let mapperMapping = new MapperMapping(namespace);
     mapperMapping.xmlPath = vscode.Uri.parse(file.path);
 
-    let relativePath = this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
+    let relativePath =
+      this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
     let files = await vscode.workspace.findFiles(relativePath);
     if (files && files.length > 0) {
       mapperMapping.javaPath = files[0];
@@ -98,14 +101,16 @@ export class MapperMappingContext {
    */
   static async getMapperMapping(namespace: string): Promise<MapperMapping> {
     // 从缓存中获取
-    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(
+      namespace
+    );
 
     if (mapperMappingValue) {
       return mapperMappingValue;
     }
     // 缓存中不存在查找所有xml文件 进行匹配获取
     // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
-    let files = await vscode.workspace.findFiles("**/*.xml");
+    let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_SCAN);
     for (const file of files) {
       await MapperMappingContext.registryMapperXmlFile(file);
       mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
@@ -122,20 +127,27 @@ export class MapperMappingContext {
    * @param namespace
    * @returns
    */
-  static async getMapperMappingByJavaFile(document: vscode.TextDocument): Promise<MapperMapping> {
+  static async getMapperMappingByJavaFile(
+    document: vscode.TextDocument
+  ): Promise<MapperMapping> {
     let content = document.getText();
     let packageName = InterfaceDecode.package(content);
 
     let filePath = document.fileName;
-    let fileShortName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+    let fileShortName = filePath.substring(
+      filePath.lastIndexOf("\\") + 1,
+      filePath.lastIndexOf(".")
+    );
 
     let namespace = packageName + "." + fileShortName;
-    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(
+      namespace
+    );
     if (mapperMappingValue) {
       return mapperMappingValue || new MapperMapping(namespace);
     }
 
-    let files = await vscode.workspace.findFiles("**/" + fileShortName + ".xml");
+    let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_SCAN_BASE + fileShortName + ".xml");
     for (const file of files) {
       await MapperMappingContext.registryMapperXmlFile(file);
     }
@@ -147,14 +159,22 @@ export class MapperMappingContext {
    * @param fileNameWithSuffix
    * @param namespace
    */
-  static async getMapperMappingByXmlFile(document: vscode.TextDocument): Promise<MapperMapping> {
+  static async getMapperMappingByXmlFile(
+    document: vscode.TextDocument
+  ): Promise<MapperMapping> {
     let content = document.getText();
-    let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [""])[0].trim();
-    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+    let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [
+      ""
+    ])[0].trim();
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(
+      namespace
+    );
     if (mapperMappingValue) {
       return mapperMappingValue || new MapperMapping(namespace);
     }
-    mapperMappingValue = (await MapperMappingContext.registryMapperXmlFile(document.uri)) || new MapperMapping(namespace);
+    mapperMappingValue =
+      (await MapperMappingContext.registryMapperXmlFile(document.uri)) ||
+      new MapperMapping(namespace);
     return mapperMappingValue;
   }
 
@@ -168,7 +188,11 @@ class MapperMapping {
   xmlIds: string[] = [];
   javaIds: string[] = [];
 
-  constructor(namespace: string, xmlPath?: vscode.Uri | undefined, javaPath?: vscode.Uri | undefined) {
+  constructor(
+    namespace: string,
+    xmlPath?: vscode.Uri | undefined,
+    javaPath?: vscode.Uri | undefined
+  ) {
     this.namespace = namespace;
     this.xmlPath = xmlPath;
     this.javaPath = javaPath;

@@ -21,8 +21,7 @@
     "activationEvents": [
         "onCommand:mybatis-tools.config",
         "onCommand:mybatis-tools.jumper",
-        "onCommand:mybatis-tools.log-format",
-        "onCommand:mybatis-tools.clean"
+        "onCommand:mybatis-tools.log-format"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -30,7 +29,8 @@
             "title": "mybatis-tools配置",
             "properties": {
                 "mybatis-tools.databaseType": {
-                    "title": "当前工作空间数据库类型",
+                    "title": "数据库类型",
+                    "description": "当前工作空间项目中依赖的数据库类型",
                     "type": "string",
                     "default": "mysql",
                     "allOf": [
@@ -43,8 +43,7 @@
         "keybindings": [
             {
                 "command": "mybatis-tools.config",
-                "key": "ctrl+m ctrl+c",
-                "when": "editorTextFocus"
+                "key": "ctrl+m ctrl+c"
             },
             {
                 "command": "mybatis-tools.jumper",
@@ -53,13 +52,11 @@
             },
             {
                 "command": "mybatis-tools.log-format",
-                "key": "ctrl+m ctrl+f",
-                "when": "editorTextFocus"
+                "key": "ctrl+m ctrl+f"
             },
             {
                 "command": "mybatis-tools.clean",
-                "key": "ctrl+m ctrl+d",
-                "when": "editorTextFocus"
+                "key": "ctrl+m ctrl+d"
             }
         ],
         "commands": [

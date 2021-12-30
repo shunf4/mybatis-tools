@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { ConfigMain } from "./command/ConfigMain";
 import { JumperMain } from "./command/JumperMain";
 import { LogFormatMain } from "./command/LogFormatMain";
+import { CleanConfigMain } from './command/CleanConfigMain';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -18,6 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(new JumperMain().dispose());
   // 日志格式化
   context.subscriptions.push(new LogFormatMain().dispose());
+  // 缓存清理
+  context.subscriptions.push(new CleanConfigMain().dispose());
 }
 
 // this method is called when your extension is deactivated
