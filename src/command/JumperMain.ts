@@ -94,7 +94,7 @@ export class JumperMain extends BaseCommand implements Disposable {
    * @param word
    * @param doWhenNotMatch
    */
-  jump(path: vscode.Uri, word: string, doWhenNotMatch?: (document: vscode.TextDocument, word: string) => Promise<AddContent | null>) {
+  jump(path: vscode.Uri, word: string, doWhenNotMatch?: (document: vscode.TextDocument, word: string) => Promise<void>) {
     vscode.workspace.openTextDocument(path).then(async (doc) => {
       let wordIndexAtLine = -1;
       let lineNumber = 0;
@@ -108,14 +108,7 @@ export class JumperMain extends BaseCommand implements Disposable {
 
       // 没有匹配到文本
       if (wordIndexAtLine === -1 && doWhenNotMatch) {
-        let addContent = await doWhenNotMatch(doc, word);
-        vscode.window.showTextDocument(doc, 1, false).then((editor) => {
-          vscode.window.activeTextEditor?.edit((edit) => {
-            if (addContent) {
-              edit.insert(addContent.position, addContent.content);
-            }
-          });
-        });
+        await doWhenNotMatch(doc, word);
       } else {
         let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
         await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
@@ -134,25 +127,32 @@ export class JumperMain extends BaseCommand implements Disposable {
    * @param doc
    * @param word
    */
-  async doWhenNotMatchXml(doc: vscode.TextDocument, word: string): Promise<AddContent | null> {
+  async doWhenNotMatchXml(doc: vscode.TextDocument, word: string) {
     let res = await vscode.window.showQuickPick(["jump directly", "stay here", "create statement"], {
       canPickMany: false,
       title: "cannot find sql in xml, so next to do?",
     });
     if (!res || res === "stay here") {
-      return null;
+      return;
     }
     if (res === "jump directly") {
       let pos = new vscode.Position(0, 0);
       vscode.window.showTextDocument(doc, 1, false).then((editor) => {
         editor.selection = new vscode.Selection(pos, pos);
       });
-      return null;
+      return;
     }
     if (res === "create statement") {
-      return DocumentUtil.createStatement(doc, word);
+      let addContent = DocumentUtil.createStatement(doc, word);
+      vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+        vscode.window.activeTextEditor?.edit((edit) => {
+          if (addContent) {
+            edit.insert(addContent.position, addContent.content);
+            editor.revealRange(new vscode.Range(addContent.position, addContent.position), vscode.TextEditorRevealType.InCenter);
+          }
+        });
+      });
     }
-    return null;
   }
 
   /**
@@ -160,25 +160,32 @@ export class JumperMain extends BaseCommand implements Disposable {
    * @param doc
    * @param word
    */
-  async doWhenNotMatchJava(doc: vscode.TextDocument, word: string): Promise<AddContent | null> {
+  async doWhenNotMatchJava(doc: vscode.TextDocument, word: string) {
     let res = await vscode.window.showQuickPick(["jump directly", "stay here", "create abstract method"], {
       canPickMany: false,
       title: "cannot find method in interface, so next to do?",
     });
 
     if (!res || res === "stay here") {
-      return null;
+      return;
     }
     if (res === "jump directly") {
       let pos = new vscode.Position(0, 0);
       vscode.window.showTextDocument(doc, 1, false).then((editor) => {
         editor.selection = new vscode.Selection(pos, pos);
       });
-      return null;
+      return;
     }
     if (res === "create abstract method") {
-      return DocumentUtil.createAbstractMethod(doc, word);
+      let addContent = DocumentUtil.createAbstractMethod(doc, word);
+      vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+        vscode.window.activeTextEditor?.edit((edit) => {
+          if (addContent) {
+            edit.insert(addContent.position, addContent.content);
+            editor.revealRange(new vscode.Range(addContent.position, addContent.position), vscode.TextEditorRevealType.InCenter);
+          }
+        });
+      });
     }
-    return null;
   }
 }

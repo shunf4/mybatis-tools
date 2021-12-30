@@ -30,7 +30,7 @@ export class Constant {
   static PATTERN_PACKAGE = new RegExp(`(?<=package\\s+)(${Constant.NAMESPACE})(?=\\s*;)`, "g");
   static PATTERN_NAME = new RegExp(`${Constant.NAME}`, "g");
   static PATTERN_CHAR = /[\u00C0-\u02B8a-zA-Z_$0-9]/;
-  static PATTERN_NAMESPACE = new RegExp(`(?<=namespace\\s+\\=\\s+")${Constant.NAMESPACE}(?=")`);
+  static PATTERN_NAMESPACE = new RegExp(`(?<=namespace\\s*\\=\\s*")${Constant.NAMESPACE}(?=")`);
 }
 
 // let ACCESS_FLAG = "public|private|protected";

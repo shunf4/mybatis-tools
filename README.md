@@ -30,25 +30,28 @@ mybatis 框架工具集
 
 | 命令                       | 快捷键        | 含义                                                                                |
 | :------------------------- | :------------ | :---------------------------------------------------------------------------------- |
-| `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的 xml配置, 使用该命令后, 如果之后调整过文件位置需要重新执行该命令        |
 | `mybatis-tools.jumper`     | ctrl+m ctrl+j | 跳转功能, 当光标位于方法单词上, 使用该命令即可                                      |
 | `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: `Preparing:`, `Parameters:` |
 | `mybatis-tools.clean`      | ctrl+m ctrl+d | 清除映射关系缓存                                                                    |
+| `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的 xml配置, 使用该命令后, 如果之后调整过文件位置需要重新执行该命令        |
+
+> 注意: 关于缓存的使用  
+> `mybatis-tools.config`: 会加载项目中所有的映射关系, 用于跳转时加速查找映射. (也可以不执行这个命令, 首次执行跳转, 会把当前命名空间对应的映射关系缓存下来)  
+> `mybatis-tools.clean`: 适用于当调整文件位置, 变更接口文件名, 命名空间后, 应该要清理缓存的映射文件位置.  
 
 ## Extension Settings
 
 在工作空间的setting.json第一层级, 插入如下配置:
 
-1. 当前项目使用的数据库类型  
+  1. 当前项目使用的数据库类型(该配置作用于工作空间)  
+      当使用日志填充命令时, 需要根据数据库类型进行转换某些类型(如: date)  
+      如果不使用该配置, 会弹出一个选择框, 需要选中数据库类型.  
 
-  > 当使用日志填充命令时, 需要根据数据库类型进行转换某些类型(如: date)
-  > 如果不使用该配置, 会弹出一个选择框, 需要选中数据库类型.
+      ```json
+      "mybatis-tools.databaseType": "mysql",
+      ```
 
-  ```json
-  "mybatis-tools.databaseType": "mysql",
-  ```
-
-注意: 目前支持mysql, oracle
+      注意: 目前支持mysql, oracle
 
 ## Known Issues
 
