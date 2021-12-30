@@ -125,9 +125,12 @@ export class JumperMain extends BaseCommand implements Disposable {
         });
       } else {
         let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
-        console.log("匹配文件中该方法位置", path.path, word, pos.line, pos.character);
         await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
-          editor.selection = new vscode.Selection(pos, new vscode.Position(pos.line, pos.character + word.length));
+          // 跳转之后选中单词
+          let selectEnd = new vscode.Position(pos.line, pos.character + word.length);
+          let range = new vscode.Range(pos, selectEnd);
+          editor.selection = new vscode.Selection(pos, selectEnd);
+          editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
         });
       }
     });
