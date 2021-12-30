@@ -85,6 +85,11 @@ Initial release of mybatis-tools, this version only for test.
 
 -----------------------------------------------------------------------------------------------------------
 
+## todo
+
+- [ ] sql 格式化
+- [ ] test test test
+
 ### For more information
 
 - [项目源码](https://gitee.com/NikolaZhang/mybatis-tools)
