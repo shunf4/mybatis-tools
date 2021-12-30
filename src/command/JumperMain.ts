@@ -22,7 +22,7 @@ export class JumperMain extends BaseCommand implements Disposable {
    * 执行命令
    * @returns
    */
-  async doCommand() {
+  async doCommand(): Promise<void> {
     // 1. 获取光标所处的文件和方法名称
     // 2. 如果是接口:
     // 2.1 获取文件名称, 当前的package, 组装namespace
@@ -32,7 +32,7 @@ export class JumperMain extends BaseCommand implements Disposable {
     // 3.2 根据namespace获取缓存中接口的位置, 如果没有重新加载, 还是没有提示创建接口.
 
     let activeEditor = vscode.window.activeTextEditor;
-    if (activeEditor === undefined || !activeEditor) {
+    if (!activeEditor) {
       return;
     }
     let document = activeEditor.document;
@@ -40,17 +40,10 @@ export class JumperMain extends BaseCommand implements Disposable {
 
     let filePath = document.fileName;
     let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
-    let fileName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
 
     if (fileNameWithSuffix.endsWith("java")) {
       // 如果当前为java文件
-      let content = document.getText();
-      let packageName = InterfaceDecode.package(content);
-
-      let namespace = packageName + "." + fileName;
-      // 获取xml路径
-      let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(fileNameWithSuffix, namespace);
-      console.log("获取文本信息: ", packageName, namespace, word, mapperMapping.xmlPath);
+      let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(document);
       // 匹配xml中该方法位置
       if (mapperMapping.xmlPath) {
         this.jump(mapperMapping.xmlPath, word, this.doWhenNotMatchXml);
@@ -59,8 +52,8 @@ export class JumperMain extends BaseCommand implements Disposable {
       }
     } else if (fileNameWithSuffix.endsWith("xml")) {
       // 如果当前文件为xml文件
-      let mapperMapping = await MapperMappingContext.registryMapperXmlFile(document.uri);
-      if (mapperMapping && mapperMapping.javaPath) {
+      let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(document);
+      if (mapperMapping.javaPath) {
         this.jump(mapperMapping.javaPath, word, this.doWhenNotMatchJava);
       } else {
         vscode.window.showWarningMessage("没有对应的xml文件!");

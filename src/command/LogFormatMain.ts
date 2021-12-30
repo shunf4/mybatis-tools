@@ -24,7 +24,7 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     });
   }
 
-  async doCommand() {
+  async doCommand(): Promise<void> {
     // 从剪贴板获取sql日志
     let res = await this.getClipboardData();
 

@@ -1,15 +1,14 @@
-import { Disposable, InputBoxOptions } from "vscode";
+import { Disposable } from "vscode";
 import * as vscode from "vscode";
 import { BaseCommand } from "./BaseCommand";
 import { MapperMappingContext } from "../mapping/MapperMappingContext";
 
 /**
  * 使用mybatis-tools.config 命令加载项目中的xml文件与接口文件的映射关系。
- * 
+ *
  * 最终的加载结果会存放到 {@link MapperMappingContext} 上下文中
  */
 export class ConfigMain extends BaseCommand implements Disposable {
-
   dispose(): any {
     let cmd = ConfigMain.getCommand("config");
     return vscode.commands.registerCommand(cmd, () => {
@@ -17,7 +16,7 @@ export class ConfigMain extends BaseCommand implements Disposable {
     });
   }
 
-  doCommand() {
+  doCommand(): void {
     // 1. 输入一个模糊的mapper xml路径
     // 2. 查找匹配该路径的xml文件
     // 3. 获取namespace

@@ -1,6 +1,6 @@
-import { resolve } from "dns";
 import { XMLParser } from "fast-xml-parser";
 import * as vscode from "vscode";
+import { Constant, InterfaceDecode } from "../util/JavaDecode";
 
 /**
  * <p>mapper mapping 上下文
@@ -70,6 +70,10 @@ export class MapperMappingContext {
     return mapperMapping;
   }
 
+  static clean() {
+    MapperMappingContext.mapperMappingMap.clear();
+  }
+
   private static async registryMapperMapping(mapperMapping: MapperMapping) {
     // 校验namespace是否存在
     let namespace = mapperMapping.namespace;
@@ -118,21 +122,40 @@ export class MapperMappingContext {
    * @param namespace
    * @returns
    */
-  static async getMapperMappingByJavaFile(fileName: string, namespace: string): Promise<MapperMapping> {
+  static async getMapperMappingByJavaFile(document: vscode.TextDocument): Promise<MapperMapping> {
+    let content = document.getText();
+    let packageName = InterfaceDecode.package(content);
+
+    let filePath = document.fileName;
+    let fileShortName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+
+    let namespace = packageName + "." + fileShortName;
     let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
     if (mapperMappingValue) {
       return mapperMappingValue || new MapperMapping(namespace);
     }
-    let path = fileName.endsWith(".xml") ? fileName : fileName.substring(0, fileName.lastIndexOf(".")) + ".xml";
-    let files = await vscode.workspace.findFiles("**/" + path);
+
+    let files = await vscode.workspace.findFiles("**/" + fileShortName + ".xml");
     for (const file of files) {
       await MapperMappingContext.registryMapperXmlFile(file);
-      let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
-      if (mapperMappingValue) {
-        return mapperMappingValue || new MapperMapping(namespace);
-      }
     }
     return MapperMappingContext.getMapperMapping(namespace);
+  }
+
+  /**
+   * 根据 xml及命名空间查找
+   * @param fileNameWithSuffix
+   * @param namespace
+   */
+  static async getMapperMappingByXmlFile(document: vscode.TextDocument): Promise<MapperMapping> {
+    let content = document.getText();
+    let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [""])[0].trim();
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+    if (mapperMappingValue) {
+      return mapperMappingValue || new MapperMapping(namespace);
+    }
+    mapperMappingValue = (await MapperMappingContext.registryMapperXmlFile(document.uri)) || new MapperMapping(namespace);
+    return mapperMappingValue;
   }
 
   static async reload() {}

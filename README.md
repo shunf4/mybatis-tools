@@ -33,6 +33,7 @@ mybatis 框架工具集
 | `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的 xml配置, 使用该命令后, 如果之后调整过文件位置需要重新执行该命令        |
 | `mybatis-tools.jumper`     | ctrl+m ctrl+j | 跳转功能, 当光标位于方法单词上, 使用该命令即可                                      |
 | `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: `Preparing:`, `Parameters:` |
+| `mybatis-tools.clean`      | ctrl+m ctrl+d | 清除映射关系缓存                                                                    |
 
 ## Extension Settings
 
@@ -52,6 +53,13 @@ mybatis 框架工具集
 ## Known Issues
 
 ## Release Notes
+
+### 0.0.5
+
+new features:
+
+- 缓存优化
+- 新增手动清除缓存命令
 
 ### 0.0.4
 
@@ -84,11 +92,6 @@ fix bugs:
 Initial release of mybatis-tools, this version only for test.
 
 -----------------------------------------------------------------------------------------------------------
-
-## todo
-
-- [ ] sql 格式化
-- [ ] test test test
 
 ### For more information
 

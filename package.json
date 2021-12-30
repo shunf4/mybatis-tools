@@ -4,7 +4,7 @@
     "description": "tools for mybatis",
     "icon": "images/icon.png",
     "publisher": "nikolazhang",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "repository": {
         "url": "https://gitee.com/NikolaZhang/mybatis-tools.git",
         "type": "git"
@@ -21,7 +21,8 @@
     "activationEvents": [
         "onCommand:mybatis-tools.config",
         "onCommand:mybatis-tools.jumper",
-        "onCommand:mybatis-tools.log-format"
+        "onCommand:mybatis-tools.log-format",
+        "onCommand:mybatis-tools.clean"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -54,6 +55,11 @@
                 "command": "mybatis-tools.log-format",
                 "key": "ctrl+m ctrl+f",
                 "when": "editorTextFocus"
+            },
+            {
+                "command": "mybatis-tools.clean",
+                "key": "ctrl+m ctrl+d",
+                "when": "editorTextFocus"
             }
         ],
         "commands": [
@@ -68,6 +74,10 @@
             {
                 "command": "mybatis-tools.log-format",
                 "title": "mybatis日志格式化"
+            },
+            {
+                "command": "mybatis-tools.clean",
+                "title": "清除映射关系缓存"
             }
         ]
     },
