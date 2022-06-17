@@ -125,11 +125,12 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     let params = parameter.split(",");
 
     for (let param of params) {
-      let type = (/(?<=\s*\w+\()\w+(?=\))/.exec(param) || [""])[0];
+      // 修复参数为空字符串 无法获取类型
+      let type = (/(?<=\s*\w*\()\w+(?=\))/.exec(param) || [""])[0];
       let value;
       if (type) {
-        // 开头非空格并且结尾为括号
-        value = (/(?<=\s*)\S+.*(?=\(\w+\))/.exec(param) || param.trim())[0];
+        // 直接截取类型参数之前的字符
+        value = param.substring(0, param.lastIndexOf(type) - 1);
       } else {
         value = param.trim();
       }

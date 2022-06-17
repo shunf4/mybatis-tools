@@ -28,12 +28,12 @@ mybatis 框架工具集
 
 所有命令均为`mybatis-tools`作为分组前缀. 以下所有快捷键均为组合键.(当然`ctrl+shift+p`, 之后输入命令也是可以的)
 
-| 命令                       | 快捷键        | 含义                                                                                |
-| :------------------------- | :------------ | :---------------------------------------------------------------------------------- |
-| `mybatis-tools.jumper`     | ctrl+m ctrl+j | 跳转功能, 当光标位于方法单词上, 使用该命令即可                                      |
-| `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: `Preparing:`, `Parameters:` |
-| `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的 xml配置, 使用该命令后, 如果之后调整过文件位置需要重新执行该命令        |
-| `mybatis-tools.clean`      | ctrl+m ctrl+d | 清除映射关系缓存                                                                    |
+| 命令                       | 快捷键        | 含义                                                                                 |
+| :------------------------- | :------------ | :----------------------------------------------------------------------------------- |
+| `mybatis-tools.jumper`     | ctrl+m ctrl+j | 跳转功能, 当光标位于方法单词上, 使用该命令即可                                       |
+| `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: `Preparing:`, `Parameters:`  |
+| `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的命名空间及映射. 如果之后调整过文件位置需要重新执行该命令或者执行清理命令 |
+| `mybatis-tools.clean`      | ctrl+m ctrl+d | 清除映射关系缓存                                                                     |
 
 > 注意: 关于缓存的使用  
 > `mybatis-tools.config`: 会加载项目中所有的映射关系, 用于跳转时加速查找映射. (也可以不执行这个命令, 首次执行跳转, 会把当前命名空间对应的映射关系缓存下来)  
@@ -56,6 +56,11 @@ mybatis 框架工具集
 ## Known Issues
 
 ## Release Notes
+
+### 0.0.6
+
+bug fix:
+1. 修复参数中含有空字符时，会将类型作为参数的问题。
 
 ### 0.0.5
 
