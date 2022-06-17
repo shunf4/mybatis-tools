@@ -125,14 +125,15 @@ export class LogFormatMain extends BaseCommand implements Disposable {
     let params = parameter.split(",");
 
     for (let param of params) {
+      let paramTrimed = param.trim();
       // 修复参数为空字符串 无法获取类型
-      let type = (/(?<=\s*\w*\()\w+(?=\))/.exec(param) || [""])[0];
+      let type = (/(?<=\s*\w*\()\w+(?=\))/.exec(paramTrimed) || [""])[0];
       let value;
       if (type) {
         // 直接截取类型参数之前的字符
-        value = param.substring(0, param.lastIndexOf(type) - 1);
+        value = paramTrimed.substring(0, paramTrimed.lastIndexOf(type) - 1);
       } else {
-        value = param.trim();
+        value = param;
       }
       let result = handler.formatParam(type, value);
       dynamicSql = dynamicSql.replace("?", result);
