@@ -1,3 +1,4 @@
+import { GenerateFileMain } from './command/GenerateFileMain';
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
@@ -21,7 +22,10 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(new LogFormatMain().dispose());
   // 缓存清理
   context.subscriptions.push(new CleanConfigMain().dispose());
+  // 配置加载
+  context.subscriptions.push(new GenerateFileMain(context).dispose());
+
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

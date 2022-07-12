@@ -1,0 +1,66 @@
+import { MysqlConnector, OracleConnector } from './../connect/DBConnector';
+import { FileGenerateOption } from './../../model/FileGenerateOption';
+import * as vscode from 'vscode';
+export class FileGenerate {
+    type: string;
+    options: FileGenerateOption;
+
+    constructor(type: string, options: FileGenerateOption) {
+        this.type = type;
+        this.options = options;
+    }
+
+    /**
+     * 文件生成
+     */
+    generate() {
+        // 1. 获取数据库配置
+        let dbEnvs = vscode.workspace.getConfiguration("mybatis-tools.connections").get<Array<any>>(this.type) || [];
+        let selectedEnv = {
+            tag: '',
+            host: '',
+            port: -1,
+            user: '',
+            password: '',
+            database: '',
+            sid: ''
+        };
+        if (dbEnvs && dbEnvs.length > 0) {
+            for (let env of dbEnvs) {
+                if (env.tag === this.options.tag) {
+                    selectedEnv = env;
+                    break;
+                }
+            }
+        }
+        let connect = null;
+        if (this.type === 'mysql') {
+            connect = new MysqlConnector();
+            connect.host = selectedEnv.host;
+            connect.port = selectedEnv.port;
+            connect.user = selectedEnv.user;
+            connect.password = selectedEnv.password;
+            connect.database = selectedEnv.database;
+        } else if (this.type === 'oracle') {
+            connect = new OracleConnector();
+            connect.host = selectedEnv.host;
+            connect.port = selectedEnv.port;
+            connect.sid = selectedEnv.sid;
+            connect.user = selectedEnv.user;
+            connect.password = selectedEnv.password;
+            connect.database = selectedEnv.database;
+        } else {
+            throw new Error('不支持的数据库类型');
+        }
+        let columnInfos = connect.listColumn(this.options.tableName);
+        if (!columnInfos || columnInfos.length === 0) {
+            throw new Error("表字段不存在");
+        }
+        console.log('字段信息', columnInfos);
+
+        // 2. 访问数据库查询表字段
+
+        // 3. entity mapper xml 生成
+    }
+
+}
