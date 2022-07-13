@@ -1,7 +1,47 @@
+import { ColumnInfo } from './../data/DataType';
 import { MysqlConnector, OracleConnector } from './../connect/DBConnector';
 import { FileGenerateOption } from './../../model/FileGenerateOption';
 import * as vscode from 'vscode';
-export class FileGenerate {
+
+interface IFileGenerate {
+
+    /**
+     * 模板加载
+     */
+    loadTemplate(): void;
+
+    /**
+     * 内容生成
+     */
+    weaveContent(options: FileGenerateOption, columnInfos: Array<ColumnInfo>): void;
+
+    /**
+     * 文件生成
+     */
+    writeFile(path: string): void;
+
+}
+
+
+export abstract class BaseFileGenerate implements IFileGenerate {
+    content: string = '';
+
+
+    loadTemplate(): void {
+        throw new Error('Method not implemented.');
+    }
+
+    weaveContent(options: FileGenerateOption, columnInfos: ColumnInfo[]): void {
+        throw new Error('Method not implemented.');
+    }
+
+    writeFile(path: string): void {
+        throw new Error('Method not implemented.');
+    }
+
+}
+
+export class FileGenerateFactory {
     type: string;
     options: FileGenerateOption;
 
@@ -52,15 +92,16 @@ export class FileGenerate {
         } else {
             throw new Error('不支持的数据库类型');
         }
-        let columnInfos = connect.listColumn(this.options.tableName);
-        if (!columnInfos || columnInfos.length === 0) {
-            throw new Error("表字段不存在");
-        }
-        console.log('字段信息', columnInfos);
-
         // 2. 访问数据库查询表字段
+        connect.listColumn(this.options.tableName).then(columnInfos => {
+            console.log('字段信息', columnInfos);
+            if (!columnInfos || columnInfos.length === 0) {
+                throw new Error("表字段不存在");
+            }
+            // 3. entity mapper xml 生成
 
-        // 3. entity mapper xml 生成
+
+        });
     }
 
 }

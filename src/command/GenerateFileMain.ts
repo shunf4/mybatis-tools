@@ -5,7 +5,7 @@ import { BaseCommand } from "./BaseCommand";
 import { FILE_GENERATE_VIEW } from "../view/page/FileGenerateView";
 import { DataType, DataTypeMapping, MysqlDataType, OracleDataType } from "../database/data/DataType";
 import { FileGenerateOption } from '../model/FileGenerateOption';
-import { FileGenerate } from '../database/generate/FileGenerate';
+import { FileGenerateFactory } from '../database/generate/FileGenerate';
 
 /**
  * 文件生成
@@ -216,9 +216,9 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
             return;
         }
 
-        let fileGenerate = new FileGenerate(type, data);
+        let fileGeneratefactory = new FileGenerateFactory(type, data);
         try {
-            fileGenerate.generate();
+            fileGeneratefactory.generate();
             vscode.window.showInformationMessage('文件生成成功');
         } catch (error) {
             vscode.window.showInformationMessage('文件生成失败');

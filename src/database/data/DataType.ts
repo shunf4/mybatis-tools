@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { underlineToHump } from '../../util/SysUtil';
 
 export class DataTypeMapping {
 
@@ -14,15 +15,30 @@ export class DataTypeMapping {
 export class ColumnInfo {
 
     tableName: string;
+    className: string;
     columnName: string;
     columnType: string;
-    columnComment?: string;
-    tableComment?: string;
+    fieldName: string;
+    fieldType: string;
 
-    constructor(tableName: string, columnName: string, columnType: string) {
+    columnComment: string = '';
+    tableComment: string = '';
+
+    constructor(tableName: string, columnName: string, columnType: string, dataType: DataType) {
         this.tableName = tableName;
         this.columnName = columnName;
         this.columnType = columnType;
+        this.fieldName = this.getFieldName();
+        this.className = this.getClassName();
+        this.fieldType = dataType.getMappedResult(this.columnType);
+    }
+
+    getFieldName(): string {
+        return underlineToHump(this.columnName.toLowerCase());
+    }
+
+    getClassName(): string {
+        return underlineToHump(this.tableName.toLowerCase());
     }
 
 }
@@ -101,6 +117,7 @@ export class MysqlDataType extends DataType {
         super();
         this.loadMappings('mysql');
     }
+
     init(): void {
         this.mappings = [];
         this.mappings.push(
