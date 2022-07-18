@@ -1,12 +1,19 @@
 import { ColumnInfo } from './../data/DataType';
 import { FileGenerateOption } from './../../model/FileGenerateOption';
+import { DynamicElements, Element } from './ElementDefine';
 
 interface IFileGenerate {
+
+
+    /**
+     * 生成文件供外部调用
+     */
+    generate(): void;
 
     /**
      * 模板加载
      */
-    loadTemplate(): void;
+    init(): void;
 
     /**
      * 内容生成
@@ -29,23 +36,39 @@ export abstract class BaseFileGenerate implements IFileGenerate {
 
     content: string = '';
 
+    elements: Map<string, Element> = new Map<string, Element>();
+    dynamicElements: DynamicElements = new DynamicElements();
+
     constructor(options: FileGenerateOption, columnInfos: ColumnInfo[]) {
         this.options = options;
         this.columnInfos = columnInfos;
+        this.init();
     }
 
+    /**
+     * 初始化
+     */
+    abstract init(): void;
 
-    loadTemplate(): void {
-        throw new Error('Method not implemented.');
+    /**
+     * 内容编织
+     */
+    abstract weaveContent(): void;
+
+    /**
+     * 生成文件
+     */
+    abstract writeFile(): void;
+
+    generate(): void {
+        this.init();
+        this.weaveContent();
+        if (this.content && this.content.length > 0) {
+            this.writeFile();
+        } else { 
+            throw new Error("没有生成任何内容");
+        }
     }
 
-    weaveContent(): void {
-        throw new Error('Method not implemented.');
-    }
-
-    writeFile(): void {
-        throw new Error('Method not implemented.');
-
-    }
 
 }

@@ -63,8 +63,7 @@ export class FileGenerateFactory {
             }
             // 3. entity mapper xml 生成
             let entityMaker = new EntityFileGenerate(this.options, columnInfos);
-            entityMaker.weaveContent();
-            entityMaker.writeFile();
+            entityMaker.generate();
 
         });
     }
