@@ -1,8 +1,6 @@
-import { rejects } from 'assert';
 import * as mysql from 'mysql';
 import * as oracle from 'oracledb';
-import { sleep } from '../../util/SysUtil';
-import {ColumnInfo, MysqlDataType, OracleDataType} from '../data/DataType';
+import { ColumnInfo, MysqlDataType, OracleDataType } from '../data/DataType';
 
 interface DBConnector {
     /** 连接数据库并基于连接执行操作 */
@@ -78,7 +76,7 @@ export class OracleConnector extends TcpDBConnector {
                         let tableComment = String(row[6]);
                         let columnComment = String(row[7]);
                         let columnType = '';
-                        // todo 完善各种数据类型的处理和分类
+                        // todo zx 完善各种数据类型的处理和分类
                         if (['VARCHAR2'].includes(dataType)) {
                             columnType = `${dataType}(${dataLength})`;
                         } else if (['NUMBER', 'DECIMAL'].includes(dataType)) {

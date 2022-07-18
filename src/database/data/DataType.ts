@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { stringToRegExp } from '../../util/RegExpUtil';
 import { underlineToHump } from '../../util/SysUtil';
 
 export class DataTypeMapping {
@@ -18,6 +19,7 @@ export class ColumnInfo {
     className: string;
     columnName: string;
     columnType: string;
+    simpleFieldType: string;
     fieldName: string;
     fieldType: string;
 
@@ -31,6 +33,8 @@ export class ColumnInfo {
         this.fieldName = this.getFieldName();
         this.className = this.getClassName();
         this.fieldType = dataType.getMappedResult(this.columnType);
+        let lastCommaIndex = this.fieldType.lastIndexOf(".");
+        this.simpleFieldType = lastCommaIndex !== -1 ? this.fieldType.substring(lastCommaIndex + 1) : this.fieldType;
     }
 
     getFieldName(): string {
@@ -38,7 +42,8 @@ export class ColumnInfo {
     }
 
     getClassName(): string {
-        return underlineToHump(this.tableName.toLowerCase());
+        let word = underlineToHump(this.tableName.toLowerCase()) + "EO";
+        return word[0].toUpperCase() + word.substring(1);
     }
 
 }
@@ -72,9 +77,17 @@ export abstract class DataType {
      */
     loadMappings(type: string) {
         // 如果存在本地映射 覆盖默认映射关系
-        let newMappings = vscode.workspace.getConfiguration('mybatis-tools.dataType').get<Array<DataTypeMapping>>(type) || [];
+        // 加载本地的类型映射配置, 加载的结果字段为字符串类型因此需要进行转化.
+        let newMappings = vscode.workspace.getConfiguration('mybatis-tools.dataType').get<Array<any>>(type) || [];
         if (newMappings && newMappings.length > 0) {
-            this.mappings = newMappings;
+            this.mappings = [];
+            for (const newMapping of newMappings) {
+                this.mappings.push({
+                    columnType: stringToRegExp(newMapping["columnType"]),
+                    javaType: newMapping["javaType"]
+                });
+            }
+            console.log('加载类型映射关系', this.mappings);
         }
     }
 
@@ -98,7 +111,8 @@ export abstract class DataType {
      */
     getMappedResult(realColumnType: string): string {
         for (let mapping of this.mappings) {
-            if (!mapping.columnType.test(realColumnType)) {
+            console.log(mapping.columnType, typeof mapping.columnType, realColumnType);
+            if (!new RegExp(mapping.columnType).test(realColumnType)) {
                 continue;
             }
             return mapping.javaType;

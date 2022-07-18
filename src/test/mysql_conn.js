@@ -16,7 +16,7 @@ let sql = 'SELECT c.TABLE_SCHEMA, c.TABLE_NAME, c.COLUMN_NAME, c.COLUMN_TYPE, t.
     + ' order by c.ordinal_position';
 
 
-new Promise((resolve, rejects) => {
+new Promise((resolve) => {
     connection.query({
         sql: sql,
         timeout: 40000,
@@ -31,8 +31,3 @@ new Promise((resolve, rejects) => {
 });
 
 console.log('=============================');
-
-
-function queryData() { 
-    
-}

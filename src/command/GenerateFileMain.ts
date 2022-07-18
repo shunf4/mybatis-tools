@@ -3,9 +3,9 @@ import * as vscode from "vscode";
 import { Disposable } from "vscode";
 import { BaseCommand } from "./BaseCommand";
 import { FILE_GENERATE_VIEW } from "../view/page/FileGenerateView";
-import { DataType, DataTypeMapping, MysqlDataType, OracleDataType } from "../database/data/DataType";
+import { DataType, MysqlDataType, OracleDataType } from "../database/data/DataType";
 import { FileGenerateOption } from '../model/FileGenerateOption';
-import { FileGenerateFactory } from '../database/generate/FileGenerate';
+import { FileGenerateFactory } from '../database/generate/GenerateFactory';
 
 /**
  * 文件生成
@@ -217,11 +217,11 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
         }
 
         let fileGeneratefactory = new FileGenerateFactory(type, data);
-        try {
-            fileGeneratefactory.generate();
+        fileGeneratefactory.generate().then(() => {
             vscode.window.showInformationMessage('文件生成成功');
-        } catch (error) {
+        }).catch(error => {
+            console.log("文件生成失败", error);
             vscode.window.showInformationMessage('文件生成失败');
-        }
+        });
     }
 }

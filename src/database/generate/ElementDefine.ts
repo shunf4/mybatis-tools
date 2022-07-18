@@ -3,11 +3,13 @@ import { ColumnInfo } from "../data/DataType";
 
 
 const javaClass: string = `
-package _package;
+package _package
 
 _imports
 
+_classComment
 _@Data
+_@SwaggerModel
 _@tableName
 public class _className {
 
@@ -18,12 +20,19 @@ _methods
 }
 `;
 
+const classComment: string = `
+/**
+ * _tableComment
+ *
+ * @author _author
+ */`;
+
 interface ElementRule {
-    (options: FileGenerateOption): boolean;
+    (options: FileGenerateOption, columnInfo: ColumnInfo, columnInfos: ColumnInfo[]): boolean;
 }
 
 interface ElementApply {
-    (options: FileGenerateOption, columnInfos?: ColumnInfo[]): void;
+    (options: FileGenerateOption, columnInfo: ColumnInfo, columnInfos?: ColumnInfo[]): void;
 }
 
 interface ElementValues {
@@ -74,20 +83,24 @@ class Element {
      * @param columnInfos 所有的表字段及类字段信息
      */
     handleContent(options: FileGenerateOption, columnInfo: ColumnInfo, columnInfos?: ColumnInfo[]): string {
-        if (!this.rule(options)) {
+        if (!this.rule(options, columnInfo, columnInfos || [])) {
             return '';
         }
         // 如果符合规则, 则执行定义操作
-        this.apply(options);
-        let values = this.values(options, columnInfo);
+        this.apply(options, columnInfo, columnInfos || []);
+        let values = this.values(options, columnInfo, columnInfos);
         if (!values) {
             return '';
         }
         // 文本内容的替换
         let resultContent = '';
-        for (let index in this.dynamics) {
-            resultContent += this.content.replace(this.dynamics[index], values[index]);
+        let contentCopy = this.content;
+        if (this.dynamics && this.dynamics.length > 0) {
+            for (let index in this.dynamics) {
+                contentCopy = contentCopy.replace(this.dynamics[index], values[index]);
+            }
         }
+        resultContent = contentCopy;
         return resultContent;
     }
 }
@@ -105,7 +118,7 @@ class DynamicElements {
 /**
  * 固定元素, 将动态元素也固定化
  */
-class Elements {
+export class Elements {
 
     /** 根据顺序创建元素 */
     elements: Map<string, Element> = new Map<string, Element>();
@@ -125,16 +138,27 @@ class Elements {
         this.elements.set("package", new Element("package _packagePath;\n", ["_packagePath"],
             options => [`${options.parentPackage}.${options.entityPath}`]));
 
+        this.elements.set("classComment", new Element(classComment, ['_tableComment', '_author'],
+            (options, columnInfo) => [columnInfo.tableComment, options.author],
+            () => true));
+
         // ~ ------------------------------------------------------------------------------------------
         // 添加lombok
-        this.elements.set("lombok.Data", new Element("@Data\n", [],
+        this.elements.set("lombok.Data", new Element("@Data", [],
             () => [],
             options => options.isUseLombok,
             () => this.dynamicElements.imports.push("import lombok.Data;\n")));
 
         // ~ ------------------------------------------------------------------------------------------
+        // 类的swagger注释
+        this.elements.set("swagger.model", new Element("@ApiModel(\"_description\")", ["_description"],
+            (_, columnInfo) => [columnInfo.tableComment],
+            options => options.isSwagger,
+            () => this.dynamicElements.imports.push("import io.swagger.annotations.ApiModel;\n")));
+
+        // ~ ------------------------------------------------------------------------------------------
         // 添加mybatis-plus
-        this.elements.set("tableName", new Element("@TableName(\"_tableName\")\n", ["_tableName"],
+        this.elements.set("tableName", new Element("@TableName(\"_tableName\")", ["_tableName"],
             options => [options.tableName],
             () => true,
             () => this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableName;\n")));
@@ -142,23 +166,34 @@ class Elements {
         // ~ ------------------------------------------------------------------------------------------
         // 添加字段
         this.elements.set("fields", new Element("", [], () => [],
-            () => true, (options, columnInfos) => {
+            () => true, (options, ci, columnInfos) => {
+                let prefix = "    ";
 
-                let commentElement = new Element("/** _comment */\n", ["_comment"],
+                let commentElement = new Element(prefix + "/** _comment */\n", ["_comment"],
                     (_, columnInfo) => [columnInfo.columnComment],
                     () => !options.isSwagger);
-                let swaggerElement = new Element("@ApiModelProperty(\"_comment\")\n", ["_comment"],
+                let swaggerElement = new Element(prefix + "@ApiModelProperty(\"_comment\")\n", ["_comment"],
                     (_, columnInfo) => [columnInfo.columnComment],
                     () => options.isSwagger,
                     () => this.dynamicElements.imports.push("import io.swagger.annotations.ApiModelProperty;\n"));
 
-                let mybatisPlusElement = new Element("@TableField(\"_columnName\")\n", ["_columnName"],
+                let dateFormatElement = new Element(prefix + "@DateTimeFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")\n", [],
+                    () => [],
+                    (_, columnInfo) => ["Date", "LocalDateTime"].includes(columnInfo.simpleFieldType),
+                    () => this.dynamicElements.imports.push("import org.springframework.format.annotation.DateTimeFormat;\n"));
+
+                let jsonFormatElement = new Element(prefix + "@JsonFormat(pattern = \"yyyy-MM-dd HH:mm:ss\", timezone = \"GMT+8\")\n", [],
+                    () => [],
+                    (_, columnInfo) => ["Date", "LocalDateTime"].includes(columnInfo.simpleFieldType),
+                    () => this.dynamicElements.imports.push("import com.fasterxml.jackson.annotation.JsonFormat;\n"));
+
+                let mybatisPlusElement = new Element(prefix + "@TableField(\"_columnName\")\n", ["_columnName"],
                     (_, columnInfo) => [columnInfo.columnName],
                     () => true,
                     () => this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableField;\n"));
 
-                let fieldElement = new Element("private _fieldType _fieldName;\n", ["_fieldType", "_fieldName"],
-                    (_, columnInfo) => [columnInfo.fieldType, columnInfo.fieldName]);
+                let fieldElement = new Element(prefix + "private _fieldType _fieldName;\n", ["_fieldType", "_fieldName"],
+                    (_, columnInfo) => [columnInfo.simpleFieldType, columnInfo.fieldName]);
                 // 字段生成
                 if (columnInfos) {
                     for (let columnInfo of columnInfos) {
@@ -166,34 +201,76 @@ class Elements {
                         let swaggerContent = swaggerElement.handleContent(this.options, columnInfo);
                         let mybatisContent = mybatisPlusElement.handleContent(this.options, columnInfo);
                         let fieldContent = fieldElement.handleContent(this.options, columnInfo);
+                        let dateFormatontent = dateFormatElement.handleContent(this.options, columnInfo);
+                        let jsonFormatontent = jsonFormatElement.handleContent(this.options, columnInfo);
 
-                        let fieldInfo = `${commentContent}${swaggerContent}${mybatisContent}${fieldContent}`;
+                        let fieldInfo = `${commentContent}${swaggerContent}${dateFormatontent}${jsonFormatontent}${mybatisContent}${fieldContent}`;
                         this.dynamicElements.fields.push(fieldInfo);
+
+                        if (columnInfo.fieldType.length > columnInfo.simpleFieldType.length) {
+                            this.dynamicElements.imports.push("import " + columnInfo.fieldType + ";\n");
+                        }
+                        // get set 方法生成
+                        // 如果使用lombok方式 则不生成getter setter
+                        this.dynamicElements.methods.push(this.makeGetter(columnInfo.simpleFieldType, columnInfo.fieldName));
+                        this.dynamicElements.methods.push(this.makeSetter(columnInfo.simpleFieldType, columnInfo.fieldName));
                     }
                 }
             }));
-
     }
 
+    /**
+     * 生成class
+     * @returns 
+     */
     weaveContent(): string {
-        let classElementFlag = ["_package", "_imports", "_@Data", "_@TableName", "_className", "_fields", "_methods"];
         let packageContent = this.elements.get('package')?.handleContent(this.options, this.columnInfos[0], this.columnInfos) || '';
+        let classCommentContent = this.elements.get('classComment')?.handleContent(this.options, this.columnInfos[0], this.columnInfos) || '';
         let lombokDataContent = this.elements.get('lombok.Data')?.handleContent(this.options, this.columnInfos[0], this.columnInfos) || '';
+        let swaggerModelContent = this.elements.get('swagger.model')?.handleContent(this.options, this.columnInfos[0], this.columnInfos) || '';
         let tableNameContent = this.elements.get('tableName')?.handleContent(this.options, this.columnInfos[0], this.columnInfos) || '';
-        let fieldContent = this.elements.get('fields')?.handleContent(this.options, this.columnInfos[0], this.columnInfos) || '';
+        this.elements.get('fields')?.handleContent(this.options, this.columnInfos[0], this.columnInfos);
 
         // 拼接imports
-        let importsContent = this.dynamicElements.imports.join("");
-        let methodsContent = this.dynamicElements.methods.join("");
+        let importsContent = Array.from(new Set(this.dynamicElements.imports)).sort((a, b) => a.localeCompare(b)).join("");
+        let methodsContent = this.options.isSwagger ? '' : this.dynamicElements.methods.join("");
         let className = this.columnInfos[0].className;
+        let fieldContent = this.dynamicElements.fields.join("\n");
 
         // ~ ------------------------------------------------------------------------------------------
         // 添加class
+        let classElementFlag = ["_package", "_imports", "_classComment", "_@Data", "_@SwaggerModel", "_@tableName",
+            "_className", "_fields", "_methods"];
         let classElement = new Element(javaClass, classElementFlag,
-            () => [packageContent, importsContent, lombokDataContent,
-                tableNameContent, className, fieldContent, methodsContent]);
+            () => [packageContent, importsContent, classCommentContent, lombokDataContent,
+                swaggerModelContent, tableNameContent, className, fieldContent, methodsContent]);
 
-        return classElement.handleContent(this.options, this.columnInfos[0], this.columnInfos);
+        let content = classElement.handleContent(this.options, this.columnInfos[0], this.columnInfos);
+        console.log('生成文本结果', content);
+        return content;
+    }
+
+
+
+    private makeGetter(fieldType: string, fieldName: string) {
+        let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
+
+        return `
+    public ${fieldType} get${fieldNameUpper} () {
+        return this.${fieldName};
+    }
+        `;
+
+    }
+
+    private makeSetter(fieldType: string, fieldName: string) {
+        let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
+
+        return `
+    public void set${fieldNameUpper} (${fieldType} ${fieldName}) {
+        this.${fieldName} = ${fieldName};
+    }
+        `;
     }
 
 }
