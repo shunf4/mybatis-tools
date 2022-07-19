@@ -3,7 +3,9 @@ import * as vscode from "vscode";
 import { Disposable } from "vscode";
 import { BaseCommand } from "./BaseCommand";
 import { FILE_GENERATE_VIEW } from "../view/page/FileGenerateView";
-import { DataType, MysqlDataType, OracleDataType } from "../database/data/DataType";
+import { DataType } from "../database/data/DataType";
+import { OracleDataType } from "../database/data/OracleDataType";
+import { MysqlDataType } from "../database/data/MysqlDataType";
 import { FileGenerateOption } from '../model/FileGenerateOption';
 import { FileGenerateFactory } from '../database/generate/GenerateFactory';
 

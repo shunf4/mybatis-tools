@@ -1,6 +1,8 @@
 import * as mysql from 'mysql';
 import * as oracle from 'oracledb';
-import { ColumnInfo, MysqlDataType, OracleDataType } from '../data/DataType';
+import { ColumnInfo } from "../data/ColumnInfo";
+import { OracleDataType } from "../data/OracleDataType";
+import { MysqlDataType } from "../data/MysqlDataType";
 
 interface DBConnector {
     /** 连接数据库并基于连接执行操作 */

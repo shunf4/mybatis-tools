@@ -1,5 +1,5 @@
 import { FileGenerateOption } from "../../model/FileGenerateOption";
-import { ColumnInfo } from "../data/DataType";
+import { ColumnInfo } from "../data/ColumnInfo";
 
 /**
  * 元素使用规则定义
@@ -30,12 +30,12 @@ export class Element {
     /** 如果必须使用该元素则不用设置规则,
      * 配合FileGenerateOption进行过元素是否添加判断,
      * 当然如果满足条件提前操作DynamicElements也是可以的 */
-    rule: ElementRule = () => true;
+    private rule: ElementRule = () => true;
     /**
      * 生成参数
      */
-    apply: ElementApply = () => [];
-    values: ElementValues = () => [];
+    private apply: ElementApply = () => [];
+    private values: ElementValues = () => [];
 
 
     constructor(content: string, dynamics: string[], values?: ElementValues, rule?: ElementRule, apply?: ElementApply) {

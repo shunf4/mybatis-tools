@@ -1,4 +1,4 @@
-import { ColumnInfo } from './../data/DataType';
+import { ColumnInfo } from "./../data/ColumnInfo";
 import { FileGenerateOption } from './../../model/FileGenerateOption';
 import { DynamicElements, Element } from './ElementDefine';
 

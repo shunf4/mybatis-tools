@@ -3,6 +3,8 @@ import { FileGenerateOption } from "../../model/FileGenerateOption";
 import * as vscode from 'vscode';
 import { MysqlConnector, OracleConnector } from "../connect/DBConnector";
 import { EntityFileGenerate } from "./EntityFileGenerate";
+import { MapperFileGenerate } from "./MapperFileGenerate";
+import { XmlFileGenerate } from "./XmlFileGenerate";
 
 export class FileGenerateFactory {
     type: string;
@@ -64,7 +66,10 @@ export class FileGenerateFactory {
             // 3. entity mapper xml 生成
             let entityMaker = new EntityFileGenerate(this.options, columnInfos);
             entityMaker.generate();
-
+            let interfaceMaker = new MapperFileGenerate(this.options, columnInfos);
+            interfaceMaker.generate();
+            let xmlMaker = new XmlFileGenerate(this.options, columnInfos);
+            xmlMaker.generate();
         });
     }
 

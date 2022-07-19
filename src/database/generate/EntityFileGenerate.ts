@@ -3,7 +3,6 @@ import { Element } from "./ElementDefine";
 import * as vscode from 'vscode';
 
 
-
 const javaClass: string = `
 _package
 
@@ -32,7 +31,12 @@ const classComment: string = `
 
 /**
  * 数据库实体类生成
- * todo zx 代码优化, 提高配置度
+ * todo zx 提高配置度
+ * 允许通过配置的方式指定模板, 模板中占位符, 以及占位符对应的取值方式
+ * 提供给前端可以选择的变量名称, 之后通过变量取值
+ * 允许执行编排
+ * 
+ * 麻烦不想做了
  */
 export class EntityFileGenerate extends BaseFileGenerate {
 
@@ -121,6 +125,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
                         let dateFormatontent = dateFormatElement.handleContent(this.options, columnInfo);
                         let jsonFormatontent = jsonFormatElement.handleContent(this.options, columnInfo);
 
+                        // todo zx 使用模板格式化
                         let fieldInfo = `${commentContent}${swaggerContent}${dateFormatontent}${jsonFormatontent}${mybatisContent}${fieldContent}`;
                         this.dynamicElements.fields.push(fieldInfo);
 
@@ -160,7 +165,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
                 swaggerModelContent, tableNameContent, className, fieldContent, methodsContent]);
 
         let content = classElement.handleContent(this.options, this.columnInfos[0], this.columnInfos);
-        console.log('生成文本结果', content);
+        console.log('生成entity', content);
         this.content = content;
     }
 

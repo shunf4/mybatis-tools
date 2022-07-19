@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { stringToRegExp } from '../../util/RegExpUtil';
-import { underlineToHump } from '../../util/SysUtil';
 
 export class DataTypeMapping {
 
@@ -11,54 +10,6 @@ export class DataTypeMapping {
         this.columnType = columnType;
         this.javaType = javaType;
     }
-}
-
-/**
- * 字段信息 部分字段值冗余, 为了简化结构而已
- */
-export class ColumnInfo {
-
-    tableName: string;
-    
-    className: string;
-    mapperName: string;
-    tableComment: string = '';
-
-    columnName: string;
-    columnType: string;
-    columnComment: string = '';
-    
-    fieldType: string;
-    simpleFieldType: string;
-    fieldName: string;
-
-
-    constructor(tableName: string, columnName: string, columnType: string, dataType: DataType) {
-        this.tableName = tableName;
-        this.columnName = columnName;
-        this.columnType = columnType;
-        this.fieldName = this.getFieldName();
-        this.className = this.getClassName();
-        this.mapperName = this.getMapperName();
-        this.fieldType = dataType.getMappedResult(this.columnType);
-        let lastCommaIndex = this.fieldType.lastIndexOf(".");
-        this.simpleFieldType = lastCommaIndex !== -1 ? this.fieldType.substring(lastCommaIndex + 1) : this.fieldType;
-    }
-
-    getFieldName(): string {
-        return underlineToHump(this.columnName.toLowerCase());
-    }
-
-    getClassName(): string {
-        let word = underlineToHump(this.tableName.toLowerCase()) + "EO";
-        return word[0].toUpperCase() + word.substring(1);
-    }
-
-    getMapperName(): string {
-        let word = underlineToHump(this.tableName.toLowerCase()) + "Mapper";
-        return word[0].toUpperCase() + word.substring(1);
-    }
-
 }
 
 export abstract class DataType {
@@ -135,58 +86,4 @@ export abstract class DataType {
 
 }
 
-/**
- * mysql数据类型映射
- */
-export class MysqlDataType extends DataType {
 
-    constructor() {
-        super();
-        this.loadMappings('mysql');
-    }
-
-    init(): void {
-        this.mappings = [];
-        this.mappings.push(
-            /** 数值 */
-            { columnType: /TINYINT/, javaType: 'java.lang.Boolean' },
-            { columnType: /INT/, javaType: 'java.lang.Integer' },
-            { columnType: /BIGINT/, javaType: 'java.lang.Long' },
-            { columnType: /FLOAT/, javaType: 'java.math.BigDecimal' },
-            { columnType: /DOUBLE/, javaType: 'java.math.BigDecimal' },
-            { columnType: /DECIMAL/, javaType: 'java.math.BigDecimal' },
-            /** 时间 */
-            { columnType: /DATETIME/, javaType: 'java.util.Date' },
-            { columnType: /TIMESTAMP/, javaType: 'java.util.Date' },
-            /** 字符串 */
-            { columnType: /VARCHAR/, javaType: 'java.lang.String' },
-        );
-    }
-
-}
-
-/**
- * oracle数据类型映射
- */
-export class OracleDataType extends DataType {
-
-    constructor() {
-        super();
-        this.loadMappings('oracle');
-    }
-
-    init(): void {
-        this.mappings = [];
-        this.mappings.push(
-            /** 数值 */
-            { columnType: /NUMBER/, javaType: 'java.lang.Integer' },
-            { columnType: /DECIMAL/, javaType: 'java.math.BigDecimal' },
-            /** 时间 */
-            { columnType: /DATE/, javaType: 'java.util.Date' },
-            { columnType: /TIMESTAMP/, javaType: 'java.util.Date' },
-            /** 字符串 */
-            { columnType: /VARCHAR2/, javaType: 'java.lang.String' },
-        );
-    }
-
-}
