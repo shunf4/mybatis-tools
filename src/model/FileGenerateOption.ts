@@ -14,6 +14,7 @@ export class FileGenerateOption {
 
     entityPath: string = '';
     interfacePath: string = '';
+    // todo xml path
     xmlPath: string = '';
 
     // ~ ------------------------------------------------------------------------------

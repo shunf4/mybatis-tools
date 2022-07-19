@@ -2,12 +2,12 @@ import { MysqlConnector, OracleConnector, TcpDBConnector } from '../database/con
 import * as vscode from "vscode";
 import { Disposable } from "vscode";
 import { BaseCommand } from "./BaseCommand";
-import { FILE_GENERATE_VIEW } from "../view/page/FileGenerateView";
 import { DataType } from "../database/data/DataType";
 import { OracleDataType } from "../database/data/OracleDataType";
 import { MysqlDataType } from "../database/data/MysqlDataType";
 import { FileGenerateOption } from '../model/FileGenerateOption';
 import { FileGenerateFactory } from '../database/generate/GenerateFactory';
+import { readExtentsionFile } from '../util/FileReader';
 
 /**
  * 文件生成
@@ -36,12 +36,7 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
                 enableScripts: true
             }
         );
-        panel.webview.html = FILE_GENERATE_VIEW;
-
-        // let filePath = vscode.Uri.joinPath(vscode.Uri.parse(this.context.extensionPath), 'src', 'view', 'page', 'index.html');
-        // let readData = await vscode.workspace.fs.readFile(filePath);
-        // let htmlContent = Buffer.from(readData).toString("utf8");
-        // panel.webview.html = htmlContent;
+        panel.webview.html = readExtentsionFile(this.context, 'src/view/page/index.html');
 
         // 数据传递 command type data
         panel.webview.onDidReceiveMessage(
