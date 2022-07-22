@@ -87,6 +87,21 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
                             data: dbEnvs
                         });
                         break;
+                    case 'loadTagDbConfig':
+                        let dbs = vscode.workspace.getConfiguration("mybatis-tools.connections").get<Array<any>>(msg.type) || [];
+                        for (let db of dbs) {
+                            if (db.tag === msg.data.tag) {
+                                panel.webview.postMessage({
+                                    type: msg.type,
+                                    command: 'loadTagDbConfigResult',
+                                    data: db
+                                });
+                                break;
+                            }
+                        }
+                        break;
+                    case 'getTheme':
+                        break;
                     default:
                         return;
                 }
@@ -202,7 +217,12 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
         } else {
             throw new Error("不支持的数据类型");
         }
-        dataType.saveMappings(type, data);
+        try {
+            dataType.saveMappings(type, data);
+            vscode.window.showInformationMessage("保存成功！");
+        } catch (error: any) {
+            vscode.window.showErrorMessage(error.message);
+        }
     }
 
     generateFile(type: string, data: FileGenerateOption) {

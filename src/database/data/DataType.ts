@@ -64,6 +64,12 @@ export abstract class DataType {
             if (d.columnType === '' || d.javaType === '') {
                 continue;
             }
+            try {
+                stringToRegExp(d.columnType);
+            } catch (error) {
+                console.log('正则表达式错误');
+                throw Error("正则表达式错误 " + d.columnType);
+            }
             newData.push(d);
         }
         vscode.workspace.getConfiguration('mybatis-tools.dataType').update(type, newData);
@@ -74,14 +80,23 @@ export abstract class DataType {
      * @param realColumnType
      */
     getMappedResult(realColumnType: string): string {
+        let lastLength: number = 0;
+        let lastJavaType:string = '';
         for (let mapping of this.mappings) {
-            console.log(mapping.columnType, typeof mapping.columnType, realColumnType);
             if (!new RegExp(mapping.columnType).test(realColumnType)) {
                 continue;
             }
-            return mapping.javaType;
+            let len = mapping.columnType.toString().length;
+            if (lastLength < len) {
+                lastJavaType = mapping.javaType;
+                lastLength = len;
+            }
         }
-        throw new Error("不匹配的字段类型" + realColumnType);
+        if (lastJavaType) {
+            return lastJavaType;
+        } else {
+            throw new Error("不匹配的字段类型" + realColumnType);
+        }
     }
 
 }

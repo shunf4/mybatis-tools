@@ -25,11 +25,10 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(new CleanConfigMain().dispose());
   // 配置加载
   context.subscriptions.push(new GenerateFileMain(context).dispose());
-
+  // 状态保持
   vscode.window.registerWebviewPanelSerializer('mybatis-tools.wakeup', new FileGenerateSerializer(context));
 
 
-  
 }
 
 // this method is called when your extension is deactivated

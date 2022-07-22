@@ -66,11 +66,13 @@
                         <div class="nav nav-tabs" id="nav-db-config-tab" role="tablist">
                             <button class="nav-link active" id="nav-mysql-config-tab" data-bs-toggle="tab"
                                 data-bs-target="#nav-mysql-config" type="button" role="tab"
-                                aria-controls="nav-mysql-config" aria-selected="true">Mysql
+                                aria-controls="nav-mysql-config" aria-selected="true"
+                                onclick="changeDbTab('mysql')">Mysql
                             </button>
                             <button class="nav-link" id="nav-oracle-config-tab" data-bs-toggle="tab"
                                 data-bs-target="#nav-oracle-config" type="button" role="tab"
-                                aria-controls="nav-oracle-config" aria-selected="false">Oracle
+                                aria-controls="nav-oracle-config" aria-selected="false"
+                                onclick="changeDbTab('oracle')">Oracle
                             </button>
                         </div>
                     </nav>
@@ -80,12 +82,12 @@
                             aria-labelledby="nav-mysql-config-tab">
                             <!-- mysql配置 -->
                             <form name="db-mysql">
-
                                 <div class="row g-2">
                                     <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">TAG</span>
-                                            <input id="db_mysql_tag" type="text" name="tag" class="form-control" />
+                                            <input id="db_mysql_tag" type="text" name="tag" class="form-control"
+                                                onchange="loadTagDbConfig('mysql')" />
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="row g-2">
-                                    <div class="col-2">
+                                    <div class="col-4">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Host</span>
                                             <input id="db_mysql_host" type="text" name="host" class="form-control" />
@@ -111,7 +113,7 @@
                                             <input id="db_mysql_port" type="number" name="port" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-4">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Database</span>
                                             <input id="db_mysql_database" type="text" name="database"
@@ -162,7 +164,8 @@
                                     <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">TAG</span>
-                                            <input id="db_oracle_tag" type="text" name="tag" class="form-control" />
+                                            <input id="db_oracle_tag" type="text" name="tag" class="form-control"
+                                                onchange="loadTagDbConfig('oracle')" />
                                         </div>
                                     </div>
                                 </div>
@@ -176,7 +179,7 @@
                                     </div>
                                 </div>
                                 <div class="row g-2">
-                                    <div class="col-2">
+                                    <div class="col-4">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Host</span>
                                             <input id="db_oracle_host" type="text" name="host" class="form-control" />
@@ -188,7 +191,7 @@
                                             <input id="db_oracle_port" type="number" name="port" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-4">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">SID</span>
                                             <input id="db_oracle_sid" type="text" name="sid" class="form-control" />
@@ -198,13 +201,13 @@
                                 <div class="row g-2">
                                     <div class="col-2">
                                         <div class="col-auto input-group mb-3">
-                                            <span class="input-group-text">User</span>
+                                            <label class="input-group-text" for="db_oracle_user">User</label>
                                             <input id="db_oracle_user" type="text" name="user" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="col-auto input-group mb-3">
-                                            <span class="input-group-text">Password</span>
+                                            <label class="input-group-text" for="db_oracle_password">Password</label>
                                             <input id="db_oracle_password" type="password" name="password"
                                                 class="form-control" />
                                         </div>
@@ -459,6 +462,7 @@
         const msg = event.data;
         console.log('webview 接收到消息', msg);
         let data = msg.data;
+        let type = msg.type;
         switch (msg.command) {
             case 'dbListResult':
                 clearList('dbConfiglist');
@@ -495,10 +499,36 @@
                 }
                 envSelect.innerHTML = options;
                 break;
+            case 'loadTagDbConfigResult':
+                if (data) {
+                    if (type === 'mysql') {
+                        document.getElementById('db_mysql_tag').value = data.tag;
+                        document.getElementById('db_mysql_url').value = data.url;
+                        document.getElementById('db_mysql_host').value = data.host;
+                        document.getElementById('db_mysql_port').value = data.port;
+                        document.getElementById('db_mysql_database').value = data.database;
+                        document.getElementById('db_mysql_user').value = data.user;
+                        document.getElementById('db_mysql_password').value = data.password;
+                    } else if (type === 'oracle') {
+                        console.log(data);
+                        document.getElementById('db_oracle_tag').value = data.tag;
+                        document.getElementById('db_oracle_url').value = data.url;
+                        document.getElementById('db_oracle_host').value = data.host;
+                        document.getElementById('db_oracle_port').value = data.port;
+                        document.getElementById('db_oracle_sid').value = data.sid;
+                        document.getElementById('db_oracle_user').value = data.user;
+                        document.getElementById('db_oracle_password').value = data.password;
+                    } else {
+                        return;
+                    }
+                }
+                break;
             default:
                 ;
         }
     });
+
+    jump('strategyConfig');
 
     /** 清理table */
     function clearList(tableId) {
@@ -523,6 +553,9 @@
         }
         if (pageId === 'strategyConfig') {
             listDbEnv('mysql');
+        }
+        if (pageId === 'typeConfig') {
+            listDataType('mysql')
         }
 
         document.getElementById(pageId).style.display = "block";
@@ -558,6 +591,24 @@
     // ~ ------------------------------------------------------------------------------------------------------------
     // 数据库配置
     // ~ ------------------------------------------------------------------------------------------------------------
+    function loadTagDbConfig(type) {
+        let tag = document.getElementById(type === 'mysql' ? 'db_mysql_tag' : 'db_oracle_tag').value;
+        console.log('加载tag', type, tag);
+        if (type && tag) {
+            vscode.postMessage({
+                command: 'loadTagDbConfig',
+                type: type,
+                data: {
+                    tag: tag
+                }
+            });
+        }
+    }
+
+    function changeDbTab(type) {
+        dbList(type);
+    }
+
     function dbList(type) {
         vscode.postMessage({
             command: 'dbList',
@@ -615,7 +666,6 @@
             document.getElementById('db_oracle_url').value = '';
             document.getElementById('db_oracle_host').value = '';
             document.getElementById('db_oracle_port').value = '';
-            document.getElementById('db_oracle_database').value = '';
             document.getElementById('db_oracle_user').value = '';
             document.getElementById('db_oracle_password').value = '';
         } else {
@@ -690,6 +740,11 @@
     }
 
     function listDbEnv(type) {
+        if (document.getElementById('listDbEnv1').checked) {
+            type = 'mysql';
+        } else if (document.getElementById('listDbEnv2').checked) {
+            type = 'oracle';
+        }
         vscode.postMessage({
             command: 'listDbEnv',
             type: type
@@ -700,6 +755,11 @@
     // 类型映射配置
     // ~ ------------------------------------------------------------------------------------------------------------
     function listDataType(type) {
+        if (document.getElementById('flexRadioDefault1').checked) {
+            type = 'mysql';
+        } else if (document.getElementById('flexRadioDefault2').checked) {
+            type = 'oracle';
+        }
         if (type !== 'mysql' && type !== 'oracle') {
             throw new Error("不支持的数据库类型");
         }
