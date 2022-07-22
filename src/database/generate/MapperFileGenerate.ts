@@ -56,21 +56,15 @@ export class MapperFileGenerate extends BaseFileGenerate {
         this.content = mapperContent;
     }
 
-    writeFile(): void {
-        let projectPath = vscode.Uri.parse(this.options.projectPath);
-        let fileDirectory = vscode.Uri.joinPath(projectPath,
+    getDirectory(projectPath: vscode.Uri): vscode.Uri {
+        return vscode.Uri.joinPath(projectPath,
             this.options.parentPackage.replace(/\./g, '/'),
             this.options.interfacePath.replace(/\./g, '/')
         );
-        let filePath = vscode.Uri.joinPath(projectPath,
-            this.options.parentPackage.replace(/\./g, '/'),
-            this.options.interfacePath.replace(/\./g, '/'),
-            this.columnInfos[0].mapperName + '.java'
-        );
+    }
 
-        vscode.workspace.fs.createDirectory(fileDirectory).then(() => {
-            vscode.workspace.fs.writeFile(filePath, Buffer.from(this.content));
-        });
+    getFileName(): string {
+        return this.columnInfos[0].mapperName + '.java';
     }
 
 }

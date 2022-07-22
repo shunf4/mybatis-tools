@@ -51,22 +51,15 @@ export class XmlFileGenerate extends BaseFileGenerate {
         this.content = xmlContent;
     }
 
-
-    writeFile(): void {
-        let projectPath = vscode.Uri.parse(this.options.projectPath);
-        let fileDirectory = vscode.Uri.joinPath(projectPath,
+    getDirectory(projectPath: vscode.Uri): vscode.Uri {
+        return vscode.Uri.joinPath(projectPath,
             this.options.parentPackage.replace(/\./g, '/'),
             this.options.xmlPath.replace(/\./g, '/')
         );
-        let filePath = vscode.Uri.joinPath(projectPath,
-            this.options.parentPackage.replace(/\./g, '/'),
-            this.options.xmlPath.replace(/\./g, '/'),
-            this.columnInfos[0].mapperName + '.xml'
-        );
+    }
 
-        vscode.workspace.fs.createDirectory(fileDirectory).then(() => {
-            vscode.workspace.fs.writeFile(filePath, Buffer.from(this.content));
-        });
+    getFileName(): string {
+        return this.columnInfos[0].mapperName + '.xml';
     }
 
 } 

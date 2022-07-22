@@ -36,7 +36,7 @@ const classComment: string = `
  * 提供给前端可以选择的变量名称, 之后通过变量取值
  * 允许执行编排
  * 
- * 麻烦不想做了
+ * 麻烦不想做了，想法先留着
  */
 export class EntityFileGenerate extends BaseFileGenerate {
 
@@ -192,21 +192,15 @@ export class EntityFileGenerate extends BaseFileGenerate {
         this.content = content;
     }
 
-    writeFile(): void {
-        let projectPath = vscode.Uri.parse(this.options.projectPath);
-        let fileDirectory = vscode.Uri.joinPath(projectPath,
+    getDirectory(projectPath: vscode.Uri): vscode.Uri {
+        return vscode.Uri.joinPath(projectPath,
             this.options.parentPackage.replace(/\./g, '/'),
             this.options.entityPath.replace(/\./g, '/')
         );
-        let filePath = vscode.Uri.joinPath(projectPath,
-            this.options.parentPackage.replace(/\./g, '/'),
-            this.options.entityPath.replace(/\./g, '/'),
-            this.columnInfos[0].className + '.java'
-        );
+    }
 
-        vscode.workspace.fs.createDirectory(fileDirectory).then(() => {
-            vscode.workspace.fs.writeFile(filePath, Buffer.from(this.content));
-        });
+    getFileName(): string {
+        return this.columnInfos[0].className + '.java';
     }
 
 

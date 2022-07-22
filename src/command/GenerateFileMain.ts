@@ -35,7 +35,8 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
             vscode.ViewColumn.One,
             {
                 // Enable scripts in the webview
-                enableScripts: true
+                enableScripts: true,
+                retainContextWhenHidden: true
             }
         );
         panel.webview.html = readExtentsionFile(this.context, 'src/view/page/index.html');
