@@ -1,4 +1,6 @@
-import { MysqlConnector, OracleConnector, TcpDBConnector } from '../database/connect/DBConnector';
+import { TcpDBConnector } from '../database/connect/DBConnector';
+import { MysqlConnector } from "../database/connect/MysqlConnector";
+import { OracleConnector } from "../database/connect/OracleConnector";
 import * as vscode from "vscode";
 import { Disposable } from "vscode";
 import { BaseCommand } from "./BaseCommand";

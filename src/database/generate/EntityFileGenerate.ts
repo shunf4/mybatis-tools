@@ -110,6 +110,26 @@ export class EntityFileGenerate extends BaseFileGenerate {
                     () => true,
                     () => this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableField;\n"));
 
+                let mybatisPlusIdElement = new Element(prefix + "@TableId(value = \"_columnName\", type = IdType._idType)\n", ["_columnName", '_idType'],
+                    (option, columnInfo) => {
+                        let idType: string;
+                        if (!option.idType || option.idType.length === 0) {
+                            if (columnInfo.simpleFieldType === 'String') {
+                                idType = 'UUID';
+                            } else {
+                                idType = 'AUTO';
+                            }
+                        } else {
+                            idType = option.idType;
+                        }
+                        return [columnInfo.columnName, idType];
+                    },
+                    () => true,
+                    () => {
+                        this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableId;\n");
+                        this.dynamicElements.imports.push("import com.baomidou.mybatisplus.enums.IdType;\n");
+                    });
+
                 // ~ --------------------------
                 // 字段信息
                 let fieldElement = new Element(prefix + "private _fieldType _fieldName;\n", ["_fieldType", "_fieldName"],
@@ -120,12 +140,15 @@ export class EntityFileGenerate extends BaseFileGenerate {
                     for (let columnInfo of columnInfos) {
                         let commentContent = commentElement.handleContent(this.options, columnInfo);
                         let swaggerContent = swaggerElement.handleContent(this.options, columnInfo);
-                        let mybatisContent = mybatisPlusElement.handleContent(this.options, columnInfo);
+                        let mybatisContent: string;
+                        if (columnInfo.isId) {
+                            mybatisContent = mybatisPlusIdElement.handleContent(this.options, columnInfo);
+                        } else {
+                            mybatisContent = mybatisPlusElement.handleContent(this.options, columnInfo);
+                        }
                         let fieldContent = fieldElement.handleContent(this.options, columnInfo);
                         let dateFormatontent = dateFormatElement.handleContent(this.options, columnInfo);
                         let jsonFormatontent = jsonFormatElement.handleContent(this.options, columnInfo);
-
-                        // todo zx 使用模板格式化
                         let fieldInfo = `${commentContent}${swaggerContent}${dateFormatontent}${jsonFormatontent}${mybatisContent}${fieldContent}`;
                         this.dynamicElements.fields.push(fieldInfo);
 

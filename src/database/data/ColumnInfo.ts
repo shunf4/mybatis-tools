@@ -26,10 +26,11 @@ export class ColumnInfo {
     jdbcType: string = '';
 
 
-    constructor(tableName: string, columnName: string, columnType: string, dataType: DataType) {
+    constructor(tableName: string, columnName: string, columnType: string, dataType: DataType, isId: boolean) {
         this.tableName = tableName;
         this.columnName = columnName;
         this.columnType = columnType;
+        this.isId = isId;
         this.fieldName = this.getFieldName();
         this.className = this.getClassName();
         this.mapperName = this.getMapperName();

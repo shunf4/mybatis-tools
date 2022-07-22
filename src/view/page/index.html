@@ -38,23 +38,21 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#" onclick="jump('strategyConfig')">生成策略配置</a>
                             </li>
-                            <div class="d-flex">
-                                <button onclick="changeTheme()" class="btn btn-primary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                        class="bi bi-lightbulb" viewBox="0 0 20 20" id="lightThemeId"
-                                        style="display: block;">
-                                        <path
-                                            d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" />
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                        class="bi bi-lightbulb-off" viewBox="0 0 20 20" id="darkThemeId"
-                                        style="display: none;">
-                                        <path fill-rule="evenodd"
-                                            d="M2.23 4.35A6.004 6.004 0 0 0 2 6c0 1.691.7 3.22 1.826 4.31.203.196.359.4.453.619l.762 1.769A.5.5 0 0 0 5.5 13a.5.5 0 0 0 0 1 .5.5 0 0 0 0 1l.224.447a1 1 0 0 0 .894.553h2.764a1 1 0 0 0 .894-.553L10.5 15a.5.5 0 0 0 0-1 .5.5 0 0 0 0-1 .5.5 0 0 0 .288-.091L9.878 12H5.83l-.632-1.467a2.954 2.954 0 0 0-.676-.941 4.984 4.984 0 0 1-1.455-4.405l-.837-.836zm1.588-2.653.708.707a5 5 0 0 1 7.07 7.07l.707.707a6 6 0 0 0-8.484-8.484zm-2.172-.051a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708z" />
-                                    </svg>
-                                </button>
-                            </div>
                         </ul>
+                    </div>
+                    <div class="d-flex">
+                        <button onclick="changeTheme()" class="btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-lightbulb" viewBox="0 0 20 20" id="lightThemeId" style="display: block;">
+                                <path
+                                    d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                class="bi bi-lightbulb-off" viewBox="0 0 20 20" id="darkThemeId" style="display: none;">
+                                <path fill-rule="evenodd"
+                                    d="M2.23 4.35A6.004 6.004 0 0 0 2 6c0 1.691.7 3.22 1.826 4.31.203.196.359.4.453.619l.762 1.769A.5.5 0 0 0 5.5 13a.5.5 0 0 0 0 1 .5.5 0 0 0 0 1l.224.447a1 1 0 0 0 .894.553h2.764a1 1 0 0 0 .894-.553L10.5 15a.5.5 0 0 0 0-1 .5.5 0 0 0 0-1 .5.5 0 0 0 .288-.091L9.878 12H5.83l-.632-1.467a2.954 2.954 0 0 0-.676-.941 4.984 4.984 0 0 1-1.455-4.405l-.837-.836zm1.588-2.653.708.707a5 5 0 0 1 7.07 7.07l.707.707a6 6 0 0 0-8.484-8.484zm-2.172-.051a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </nav>
@@ -82,29 +80,38 @@
                             aria-labelledby="nav-mysql-config-tab">
                             <!-- mysql配置 -->
                             <form name="db-mysql">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">TAG</span>
-                                    <input id="db_mysql_tag" type="text" name="tag" class="form-control" />
+
+                                <div class="row g-2">
+                                    <div class="col-2">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">TAG</span>
+                                            <input id="db_mysql_tag" type="text" name="tag" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">URL</span>
-                                    <input id="db_mysql_url" type="text" name="url" onchange="urlDecode('mysql')"
-                                        class="form-control" />
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">URL</span>
+                                            <input id="db_mysql_url" type="text" name="url"
+                                                onchange="urlDecode('mysql')" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row g-2 align-items-start">
-                                    <div class="col">
+                                <div class="row g-2">
+                                    <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Host</span>
                                             <input id="db_mysql_host" type="text" name="host" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Port</span>
-                                            <input id="db_mysql_port" type="text" name="port" class="form-control" />
+                                            <input id="db_mysql_port" type="number" name="port" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Database</span>
                                             <input id="db_mysql_database" type="text" name="database"
@@ -112,35 +119,35 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row g-2 align-items-start">
-                                    <div class="col">
-                                        <div class="col-auto input-group mb-3">
+                                <div class="row g-2">
+                                    <div class="col-2">
+                                        <div class="input-group mb-3">
                                             <span class="input-group-text">User</span>
                                             <input id="db_mysql_user" type="text" name="user" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <div class="col-auto input-group mb-3">
+                                    <div class="col-3">
+                                        <div class="input-group mb-3">
                                             <span class="input-group-text">Password</span>
                                             <input id="db_mysql_password" type="password" name="password"
                                                 class="form-control" />
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row g-2 justify-content-between">
-                                    <div class="col">
+                                <div class="row g-2">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-info" onclick="dbConnectTest('mysql')">连接测试
                                         </button>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-success" onclick="dbSave('mysql')">保存
                                         </button>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-primary" onclick="dbReset('mysql')">重置
                                         </button>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-primary" onclick="dbList('mysql')">配置列表
                                         </button>
                                     </div>
@@ -151,43 +158,51 @@
                         <div class="tab-pane fade" id="nav-oracle-config" role="tabpanel"
                             aria-labelledby="nav-oracle-config-tab">
                             <form name=" db-oracle">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">TAG</span>
-                                    <input id="db_oracle_tag" type="text" name="tag" class="form-control" />
+                                <div class="row g-2">
+                                    <div class="col-2">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">TAG</span>
+                                            <input id="db_oracle_tag" type="text" name="tag" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">URL</span>
-                                    <input id="db_oracle_url" type="text" name="url" onchange="urlDecode('oracle')"
-                                        class="form-control" />
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">URL</span>
+                                            <input id="db_oracle_url" type="text" name="url"
+                                                onchange="urlDecode('oracle')" class="form-control" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row g-2 align-items-start">
-                                    <div class="col">
+                                <div class="row g-2">
+                                    <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Host</span>
                                             <input id="db_oracle_host" type="text" name="host" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">Port</span>
-                                            <input id="db_oracle_port" type="text" name="port" class="form-control" />
+                                            <input id="db_oracle_port" type="number" name="port" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-2">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">SID</span>
                                             <input id="db_oracle_sid" type="text" name="sid" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row g-2 align-items-start">
-                                    <div class="col">
+                                <div class="row g-2">
+                                    <div class="col-2">
                                         <div class="col-auto input-group mb-3">
                                             <span class="input-group-text">User</span>
                                             <input id="db_oracle_user" type="text" name="user" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-3">
                                         <div class="col-auto input-group mb-3">
                                             <span class="input-group-text">Password</span>
                                             <input id="db_oracle_password" type="password" name="password"
@@ -195,21 +210,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row g-2 justify-content-between">
-                                    <div class="col">
+                                <div class="row g-2">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-info"
                                             onclick="dbConnectTest('oracle')">连接测试
                                         </button>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-success" onclick="dbSave('oracle')">保存
                                         </button>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-primary" onclick="dbReset('oracle')">重置
                                         </button>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-1">
                                         <button type="button" class="btn btn-primary" onclick="dbList('oracle')">配置列表
                                         </button>
                                     </div>
@@ -237,26 +252,30 @@
             </div>
             <!-- 数据类型配置 -->
             <div id="typeConfig" style="display: none;">
-                <div>
-                    <div class="row align-items-start">
-                        <div class="col form-check" onclick="listDataType('mysql')">
-                            <input class="form-check-input" type="radio" name="dbType" id="flexRadioDefault1"
-                                value="mysql" checked>
-                            <label class="form-check-label" for="flexRadioDefault1">
-                                mysql
-                            </label>
+                <div class="container">
+                    <div class="row g-2">
+                        <div class="col-1">
+                            <div class="form-check" onclick="listDataType('mysql')">
+                                <input class="form-check-input" type="radio" name="dbType" id="flexRadioDefault1"
+                                    value="mysql" checked>
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    mysql
+                                </label>
+                            </div>
                         </div>
-                        <div class="col form-check" onclick="listDataType('oracle')">
-                            <input class="form-check-input" type="radio" name="dbType" id="flexRadioDefault2"
-                                value="oracle">
-                            <label class="form-check-label" for="flexRadioDefault2">
-                                oracle
-                            </label>
+                        <div class="col-1">
+                            <div class="form-check" onclick="listDataType('oracle')">
+                                <input class="form-check-input" type="radio" name="dbType" id="flexRadioDefault2"
+                                    value="oracle">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    oracle
+                                </label>
+                            </div>
                         </div>
-                        <div class="col">
+                        <div class="col-1">
                             <button type="button" class="btn btn-success" onclick="addDataType()">新增</button>
                         </div>
-                        <div class="col">
+                        <div class="col-1">
                             <button type="button" class="btn btn-success" onclick="saveDataType()">保存</button>
                         </div>
                     </div>
@@ -270,8 +289,8 @@
                         <tbody>
                         </tbody>
                     </table>
+                    <a href="#" onclick="openConfigFile()">打开配置文件</a>
                 </div>
-                <a href="#" onclick="openConfigFile()">打开配置文件</a>
             </div>
             <!-- 策略信息配置 -->
             <div id="strategyConfig" style="display: block;">
@@ -283,28 +302,39 @@
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
-                                    <div class="row">
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">项目路径</span>
-                                            <input type="text" class="form-control" id="projectPathId" />
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class=" input-group mb-3">
+                                                <label class="input-group-text" for="projectPathId">项目路径</label>
+                                                <input type="text" class="form-control" id="projectPathId" />
+                                            </div>
                                         </div>
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">顶级包</span>
-                                            <input type="text" class="form-control" id="parentPackageId" />
+                                        <div class="col-3">
+                                            <div class=" input-group mb-3">
+                                                <label class="input-group-text" for="parentPackageId">顶级包</label>
+                                                <input type="text" class="form-control" id="parentPackageId" />
+                                            </div>
+
                                         </div>
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">entity包(相对顶级)</span>
-                                            <input type="text" class="form-control" id="entityPathId" />
+                                        <div class="col-3">
+                                            <div class=" input-group mb-3">
+                                                <label class="input-group-text" for="entityPathId">entity包(相对顶级)</label>
+                                                <input type="text" class="form-control" id="entityPathId" />
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">mapper接口包</span>
-                                            <input type="text" class="form-control" id="interfacePathId" />
+                                        <div class="col-3">
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="interfacePathId">mapper接口包</label>
+                                                <input type="text" class="form-control" id="interfacePathId" />
+                                            </div>
                                         </div>
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">mapper xml路径</span>
-                                            <input type="text" class="form-control" id="xmlPathId" />
+                                        <div class="col-4">
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="xmlPathId">xml路径</label>
+                                                <input type="text" class="form-control" id="xmlPathId" />
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
@@ -312,35 +342,43 @@
                         </div>
                         <br>
                         <br>
-                        <div class="card">
+                        <div class="card g-5">
                             <div class="card-header">
                                 数据库配置
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
                                     <div class="row">
-                                        <div class="col-sm-1 form-check" onclick="listDbEnv('mysql')">
-                                            <input class="form-check-input" type="radio" name="dbEnv" id="listDbEnv1"
-                                                value="mysql" checked>
-                                            <label class="form-check-label" for="listDbEnv1">
-                                                mysql
-                                            </label>
+                                        <div class="col-1">
+                                            <div class="form-check" onclick="listDbEnv('mysql')">
+                                                <input class="form-check-input" type="radio" name="dbEnv"
+                                                    id="listDbEnv1" value="mysql" checked>
+                                                <label class="form-check-label" for="listDbEnv1">
+                                                    mysql
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-1 form-check" onclick="listDbEnv('oracle')">
-                                            <input class="form-check-input" type="radio" name="dbEnv" id="listDbEnv2"
-                                                value="oracle">
-                                            <label class="form-check-label" for="listDbEnv2">
-                                                oracle
-                                            </label>
+                                        <div class="col-1">
+                                            <div class="form-check" onclick="listDbEnv('oracle')">
+                                                <input class="form-check-input" type="radio" name="dbEnv"
+                                                    id="listDbEnv2" value="oracle">
+                                                <label class="form-check-label" for="listDbEnv2">
+                                                    oracle
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">数据库环境</span>
-                                            <select class="form-control form-select" id="dbEnvId">
-                                            </select>
+                                        <div class="col-3">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">数据库环境</span>
+                                                <select class="form-control form-select" id="dbEnvId">
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col input-group mb-3">
-                                            <span class="input-group-text">表名</span>
-                                            <input type="text" class="form-control" id="tableNameId" />
+                                        <div class="col-3">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">表名</span>
+                                                <input type="text" class="form-control" id="tableNameId" />
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
@@ -348,28 +386,51 @@
                         </div>
                         <br>
                         <br>
-                        <div class="card">
+                        <div class="card g-5">
                             <div class="card-header">
                                 其他配置
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-sm-2 form-check form-switch">
-                                            <label class="form-check-label">lombok</label>
-                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                id="isUseLombokId">
+                                    <div class="row g-2">
+                                        <div class="col-1">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label" for="isUseLombokId">lombok</label>
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    id="isUseLombokId">
+                                            </div>
                                         </div>
-                                        <div class="col-sm-2 form-check form-switch">
-                                            <label class="form-check-label">swagger</label>
-                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                id="isSwaggerId">
+                                        <div class="col-1">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label" for="isSwaggerId">swagger</label>
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    id="isSwaggerId">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="input-group">
+                                                <label class="input-group-text" for="idTypeId">id生成类型</label>
+                                                <select class="form-control form-select " id="idTypeId">
+                                                    <option value="NONE">NONE</option>
+                                                    <option value="AUTO">AUTO</option>
+                                                    <option value="UUID">UUID</option>
+                                                    <option value="INPUT">INPUT</option>
+                                                    <option value="ID_WORKER">ID_WORKER</option>
+                                                    <option value="ID_WORKER_STR">ID_WORKER_STR</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <br>
                                         <br>
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text">作者</span>
-                                            <input type="text" class="form-control" id="authorId" />
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="row g-2">
+                                        <div class="col-2">
+                                            <div class="input-group mb-3">
+                                                <label for="authorId" class="input-group-text">作者</label>
+                                                <input type="text" class="form-control" id="authorId" />
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
@@ -377,7 +438,8 @@
                         </div>
 
                     </form>
-                    <button type="button" class="btn btn-success" onclick="generateFile()">保存</button>
+                    <br>
+                    <button type="button" class="btn btn-success" onclick="generateFile()">生成文件</button>
                 </div>
             </div>
         </div>
@@ -736,6 +798,7 @@
             author: document.getElementById('authorId').value,
             isUseLombok: document.getElementById('isUseLombokId').checked,
             isSwagger: document.getElementById('isSwaggerId').checked,
+            idType: document.getElementById('idTypeId').value,
         }
 
         console.log('文件生成组装参数', data);

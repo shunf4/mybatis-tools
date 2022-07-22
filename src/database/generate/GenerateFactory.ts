@@ -1,7 +1,8 @@
 import { FileGenerateOption } from "../../model/FileGenerateOption";
 
 import * as vscode from 'vscode';
-import { MysqlConnector, OracleConnector } from "../connect/DBConnector";
+import { MysqlConnector } from "../connect/MysqlConnector";
+import { OracleConnector } from "../connect/OracleConnector";
 import { EntityFileGenerate } from "./EntityFileGenerate";
 import { MapperFileGenerate } from "./MapperFileGenerate";
 import { XmlFileGenerate } from "./XmlFileGenerate";

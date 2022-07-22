@@ -28,5 +28,5 @@ export class FileGenerateOption {
     /** 如果不使用swagger 则使用注释 */
     isSwagger: boolean = true;
 
-
+    idType: string = '';
 }
