@@ -23,7 +23,8 @@
         "onCommand:mybatis-tools.jumper",
         "onCommand:mybatis-tools.log-format",
         "onCommand:mybatis-tools.clean",
-        "onCommand:mybatis-tools.generate-file"
+        "onCommand:mybatis-tools.generate-file",
+        "onWebviewPanel:mybatis-tools.wakeup"
     ],
     "main": "./out/extension.js",
     "contributes": {

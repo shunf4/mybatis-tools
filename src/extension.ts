@@ -6,6 +6,7 @@ import { ConfigMain } from "./command/ConfigMain";
 import { JumperMain } from "./command/JumperMain";
 import { LogFormatMain } from "./command/LogFormatMain";
 import { CleanConfigMain } from './command/CleanConfigMain';
+import { FileGenerateSerializer } from './serial/FileGenerateSerializer';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -25,6 +26,10 @@ export function activate(context: vscode.ExtensionContext) {
   // 配置加载
   context.subscriptions.push(new GenerateFileMain(context).dispose());
 
+  vscode.window.registerWebviewPanelSerializer('mybatis-tools.wakeup', new FileGenerateSerializer(context));
+
+
+  
 }
 
 // this method is called when your extension is deactivated

@@ -24,6 +24,15 @@ mybatis 框架工具集
   将参数填充到动态sql中, 并且允许多个sql填充. 转换结果会写入到一个新打开的文件中.  
   注意多线程情况下, sql的输出并不是顺序的, 此时插件会按照参数个数进行匹配(当然可能不是正确的). 所以尽量还是单个sql转换, 或者有顺序的多个sql转换为好.
 
+- 文件生成器
+  使用`ctrl+m ctrl+g`，打开文件生成器页面。
+  在生成策略页面配置相关信息即可。
+  
+  注意：
+  1. 项目路径中不能包含磁盘名称， 路径应该为`/a/b/c`形式
+  2. 数据库配置需要提前配置好，并且确保连接成功。
+  3. 如果需要删除之前的配置，可以找到配置文件后，在配置文件中删除。
+
 ### 命令
 
 所有命令均为`mybatis-tools`作为分组前缀. 以下所有快捷键均为组合键.(当然`ctrl+shift+p`, 之后输入命令也是可以的)
@@ -34,6 +43,7 @@ mybatis 框架工具集
 | `mybatis-tools.log-format` | ctrl+m ctrl+f | mybatis 日志格式化 将参数填充到动态sql中, 注意需要包含: `Preparing:`, `Parameters:`  |
 | `mybatis-tools.config`     | ctrl+m ctrl+c | 加载项目中的命名空间及映射. 如果之后调整过文件位置需要重新执行该命令或者执行清理命令 |
 | `mybatis-tools.clean`      | ctrl+m ctrl+d | 清除映射关系缓存                                                                     |
+| `mybatis-tools.generate-file`   | ctrl+m ctrl+g | 文件生成器                                                                     |
 
 > 注意: 关于缓存的使用  
 > `mybatis-tools.config`: 会加载项目中所有的映射关系, 用于跳转时加速查找映射. (也可以不执行这个命令, 首次执行跳转, 会把当前命名空间对应的映射关系缓存下来)  
@@ -56,6 +66,16 @@ mybatis 框架工具集
 ## Known Issues
 
 ## Release Notes
+
+### 1.0.0
+
+new features:
+1. 支持生成数据库表对应的实体类，xml，mapper接口文件
+2. 通过webview页面进行交互。
+3. 支持自定义生成文件中元素内容。
+4. 支持数据类型映射的自定义。
+5. 支持数据库配置的保存。
+6. 支持oracle, mysql数据库
 
 ### 0.0.6
 
