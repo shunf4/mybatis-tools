@@ -77,7 +77,7 @@ export abstract class BaseFileGenerate implements IFileGenerate {
     writeFile(): void {
         let projectPath = vscode.Uri.parse(this.options.projectPath);
         let directory: vscode.Uri;
-        if (!this.options.parentPackage || this.options.parentPackage.length === 0) {
+        if (!this.options.parentPackage) {
             // 顶级包不存在 忽略子目录配置，所有文件生成在项目路径下
             directory = projectPath;
         } else {
@@ -86,7 +86,7 @@ export abstract class BaseFileGenerate implements IFileGenerate {
         }
 
         let fileName = this.getFileName();
-        if (!fileName || fileName.length === 0) {
+        if (!fileName) {
             return;
         }
         let path = vscode.Uri.joinPath(directory, fileName);

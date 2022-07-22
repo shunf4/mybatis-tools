@@ -211,7 +211,7 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
             vscode.window.showInformationMessage('请选择数据库配置');
             return;
         }
-        if (!data.tableName || data.tableName.length === 0) {
+        if (!data.tableName) {
             vscode.window.showInformationMessage('请输入表名');
             return;
         }

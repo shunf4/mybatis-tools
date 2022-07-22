@@ -15,7 +15,7 @@ export const stringToRegExp = (regStr: string): RegExp => {
 
     let lastSplitIndex = regStr.lastIndexOf('/');
     let flag = regStr.substring(lastSplitIndex + 1);
-    if (!flag || flag.length === 0) {
+    if (!flag) {
         flag = 'i';
     }
     regStr = regStr.substring(0, lastSplitIndex + 1);

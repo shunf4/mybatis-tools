@@ -122,7 +122,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
                 let mybatisPlusIdElement = new Element(prefix + "@TableId(value = \"_columnName\", type = IdType._idType)\n", ["_columnName", '_idType'],
                     (option, columnInfo) => {
                         let idType: string;
-                        if (!option.idType || option.idType.length === 0) {
+                        if (!option.idType) {
                             if (columnInfo.simpleFieldType === 'String') {
                                 idType = 'UUID';
                             } else {
@@ -223,7 +223,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
         let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
 
         return `
-    public ${fieldType} get${fieldNameUpper} () {
+    public ${fieldType} get${fieldNameUpper}() {
         return this.${fieldName};
     }
         `;
@@ -240,7 +240,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
         let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
 
         return `
-    public void set${fieldNameUpper} (${fieldType} ${fieldName}) {
+    public void set${fieldNameUpper} (${fieldType} ${fieldName}){
         this.${fieldName} = ${fieldName};
     }
         `;

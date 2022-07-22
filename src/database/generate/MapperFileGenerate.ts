@@ -28,7 +28,7 @@ export class MapperFileGenerate extends BaseFileGenerate {
 
     init(): void {
         this.elements.set("package", new Element("package _packagePath;\n", ["_packagePath"],
-            options => { 
+            options => {
                 let path: string[] = [];
                 if (options.parentPackage) {
                     path.push(options.parentPackage);
@@ -53,7 +53,18 @@ export class MapperFileGenerate extends BaseFileGenerate {
         let className = this.columnInfos[0].className;
         let mapperName = this.columnInfos[0].mapperName;
 
-        let classPackage = `import ${this.options.parentPackage}.${this.options.entityPath}.${className};\n`;
+        let classPath: string[] = [];
+        if (this.options.parentPackage) {
+            classPath.push(this.options.parentPackage);
+        }
+        if (this.options.entityPath) {
+            classPath.push(this.options.entityPath);
+        }
+        if (this.columnInfos[0].className) {
+            classPath.push(this.columnInfos[0].className);
+        }
+        let classFullPath = classPath.join(".");
+        let classPackage = `import ${classFullPath};\n`;
         this.dynamicElements.imports.push(classPackage);
         let importsContent = Array.from(new Set(this.dynamicElements.imports)).sort((a, b) => a.localeCompare(b)).join("");
 
