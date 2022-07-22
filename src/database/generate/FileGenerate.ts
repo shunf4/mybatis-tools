@@ -37,6 +37,9 @@ export abstract class BaseFileGenerate implements IFileGenerate {
 
     content: string = '';
 
+    mainPath = 'src/main/java';
+    resourcePath = 'src/main/resources';
+
     elements: Map<string, Element> = new Map<string, Element>();
     dynamicElements: DynamicElements = new DynamicElements();
 

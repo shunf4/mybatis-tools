@@ -28,7 +28,16 @@ export class MapperFileGenerate extends BaseFileGenerate {
 
     init(): void {
         this.elements.set("package", new Element("package _packagePath;\n", ["_packagePath"],
-            options => [`${options.parentPackage}.${options.interfacePath}`]));
+            options => { 
+                let path: string[] = [];
+                if (options.parentPackage) {
+                    path.push(options.parentPackage);
+                }
+                if (options.interfacePath) {
+                    path.push(options.interfacePath);
+                }
+                return [path.join(".")];
+            }));
 
         this.elements.set("classComment", new Element(mapperComment, ['_tableComment', '_author'],
             (options, columnInfo) => [columnInfo.tableComment, options.author],
@@ -57,7 +66,7 @@ export class MapperFileGenerate extends BaseFileGenerate {
     }
 
     getDirectory(projectPath: vscode.Uri): vscode.Uri {
-        return vscode.Uri.joinPath(projectPath,
+        return vscode.Uri.joinPath(projectPath, this.mainPath,
             this.options.parentPackage.replace(/\./g, '/'),
             this.options.interfacePath.replace(/\./g, '/')
         );

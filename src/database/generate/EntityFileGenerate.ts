@@ -44,7 +44,16 @@ export class EntityFileGenerate extends BaseFileGenerate {
         // ~ ------------------------------------------------------------------------------------------
         // 添加package
         this.elements.set("package", new Element("package _packagePath;\n", ["_packagePath"],
-            options => [`${options.parentPackage}.${options.entityPath}`]));
+            options => {
+                let path: string[] = [];
+                if (options.parentPackage) {
+                    path.push(options.parentPackage);
+                }
+                if (options.entityPath) {
+                    path.push(options.entityPath);
+                }
+                return [path.join(".")];
+            }));
 
         this.elements.set("classComment", new Element(classComment, ['_tableComment', '_author'],
             (options, columnInfo) => [columnInfo.tableComment, options.author],
@@ -193,7 +202,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
     }
 
     getDirectory(projectPath: vscode.Uri): vscode.Uri {
-        return vscode.Uri.joinPath(projectPath,
+        return vscode.Uri.joinPath(projectPath, this.mainPath,
             this.options.parentPackage.replace(/\./g, '/'),
             this.options.entityPath.replace(/\./g, '/')
         );

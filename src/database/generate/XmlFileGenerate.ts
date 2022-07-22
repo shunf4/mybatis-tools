@@ -40,9 +40,26 @@ export class XmlFileGenerate extends BaseFileGenerate {
             resultMapContent += rowResult;
         }
 
-        let mapperFullPathContent = `${this.options.parentPackage}.${this.options.interfacePath}.${this.columnInfos[0].mapperName}`;
-        let classFullPathContent = `${this.options.parentPackage}.${this.options.entityPath}.${this.columnInfos[0].className}`;
-
+        let mapperPath: string[] = [];
+        let classPath: string[] = [];
+        if (this.options.parentPackage) {
+            mapperPath.push(this.options.parentPackage);
+            classPath.push(this.options.parentPackage);
+        }
+        if (this.options.interfacePath) {
+            mapperPath.push(this.options.interfacePath);
+        }
+        if (this.options.entityPath) {
+            classPath.push(this.options.entityPath);
+        }
+        if (this.columnInfos[0].mapperName) {
+            mapperPath.push(this.columnInfos[0].mapperName);
+        }
+        if (this.columnInfos[0].className) {
+            classPath.push(this.columnInfos[0].className);
+        }
+        let mapperFullPathContent = mapperPath.join(".");
+        let classFullPathContent = classPath.join(".");
         let xmlContent = new Element(xmlTemplate, ["_mapperFullPath", "_classFullPath", "_resultMap", "_columnList"],
             () => [mapperFullPathContent, classFullPathContent, resultMapContent, columns.join(", ")]
         ).handleContent(this.options, this.columnInfos[0], this.columnInfos);
@@ -52,10 +69,18 @@ export class XmlFileGenerate extends BaseFileGenerate {
     }
 
     getDirectory(projectPath: vscode.Uri): vscode.Uri {
-        return vscode.Uri.joinPath(projectPath,
-            this.options.parentPackage.replace(/\./g, '/'),
-            this.options.xmlPath.replace(/\./g, '/')
-        );
+        let xmlPath = '';
+        if (!this.options.xmlPath) {
+            // 没有配置xml路径 则使用mapper接口路径
+            return vscode.Uri.joinPath(projectPath, this.mainPath,
+                this.options.parentPackage.replace(/\./g, '/'),
+                this.options.interfacePath.replace(/\./g, '/'),
+            );
+        } else {
+            return vscode.Uri.joinPath(projectPath, this.resourcePath,
+                this.options.xmlPath.replace(/\./g, '/'),
+            );
+        }
     }
 
     getFileName(): string {
