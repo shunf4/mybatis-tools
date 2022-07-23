@@ -39,7 +39,7 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
                 retainContextWhenHidden: true
             }
         );
-        panel.webview.html = readExtentsionFile(this.context, 'src/view/page/index.html');
+        panel.webview.html = readExtentsionFile(this.context, 'view/page/index.html');
 
         // 数据传递 command type data
         panel.webview.onDidReceiveMessage(
