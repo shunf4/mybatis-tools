@@ -2,7 +2,7 @@ import * as mysql from 'mysql';
 import { ColumnInfo } from "../data/ColumnInfo";
 import { MysqlDataType } from "../data/MysqlDataType";
 import { TcpDBConnector } from './DBConnector';
-
+import * as vscode from 'vscode';
 /** mysql连接 */
 
 export class MysqlConnector extends TcpDBConnector {
@@ -47,6 +47,10 @@ export class MysqlConnector extends TcpDBConnector {
                     timeout: 40000,
                     values: [this.database, tableName]
                 }, (error, results, fields) => {
+                    if (!results || results.length === 0) {
+                        vscode.window.showErrorMessage(tableName + "字段不存在");
+                        throw Error(tableName + "字段不存在");
+                    }
                     console.log('mysql查询返回结果', results, fields);
                     for (let result of results) {
                         let columnType = result["COLUMN_TYPE"].split(' ')[0];

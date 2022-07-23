@@ -2,6 +2,7 @@ import * as oracle from 'oracledb';
 import { ColumnInfo } from "../data/ColumnInfo";
 import { OracleDataType } from "../data/OracleDataType";
 import { TcpDBConnector } from './DBConnector';
+import * as vscode from 'vscode';
 
 /** oracle连接 */
 
@@ -41,11 +42,15 @@ export class OracleConnector extends TcpDBConnector {
                                                             and pc.CONSTRAINT_NAME = (select  uc.CONSTRAINT_NAME from user_constraints uc
                                                             where uc.TABLE_NAME = c.TABLE_NAME and pc.CONSTRAINT_NAME = uc.CONSTRAINT_NAME
                                                                 and uc.CONSTRAINT_TYPE = 'P' and uc.STATUS = 'ENABLED')
-                        where c.table_name = upper(?)
+                        where c.table_name = upper(:1)
                         order by c.column_id`;
                 conn.execute<any>(sql, [tableName], (error, result) => {
-                    console.log('oralce 查询返回结果', result.rows);
+                    if(!result.rows || result.rows.length === 0) {
+                        vscode.window.showErrorMessage(tableName + "字段不存在");
+                        throw Error(tableName + "字段不存在");
+                    }
                     let columnInfos: ColumnInfo[] = [];
+                    console.log('oracle 查询返回结果', result.rows);
                     for (const row of result.rows || []) {
                         let columnName = String(row[1]);
                         let dataType = String(row[2]);

@@ -240,7 +240,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
         let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
 
         return `
-    public void set${fieldNameUpper} (${fieldType} ${fieldName}){
+    public void set${fieldNameUpper}(${fieldType} ${fieldName}){
         this.${fieldName} = ${fieldName};
     }
         `;
