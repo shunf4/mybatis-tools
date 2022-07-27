@@ -31,4 +31,11 @@ export class FileGenerateOption {
     isMybatisPlus: boolean = true;
 
     idType: string = '';
+
+    /** 是否生成实体类 */
+    isEntityFile: boolean = true;
+    /** 是否生成接口 */
+    isInterfaceFile: boolean = true;
+    /** 是否生成xml */
+    isXmlFile: boolean = true;
 }

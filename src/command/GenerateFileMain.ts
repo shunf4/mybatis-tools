@@ -238,6 +238,10 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
 
     generateFile(type: string, data: FileGenerateOption) {
         console.log('文件生成', data);
+        if ((!data.isEntityFile) && (!data.isInterfaceFile) && (!data.isXmlFile)) {
+            vscode.window.showInformationMessage("无需生成文件");
+            return;
+        }
         if (!data.tag) {
             vscode.window.showInformationMessage('请选择数据库配置');
             return;

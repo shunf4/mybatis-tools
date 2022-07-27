@@ -65,12 +65,20 @@ export class FileGenerateFactory {
                 throw new Error("表字段不存在");
             }
             // 3. entity mapper xml 生成
-            let entityMaker = new EntityFileGenerate(this.options, columnInfos);
-            entityMaker.generate();
-            let interfaceMaker = new MapperFileGenerate(this.options, columnInfos);
-            interfaceMaker.generate();
-            let xmlMaker = new XmlFileGenerate(this.options, columnInfos);
-            xmlMaker.generate();
+
+            if (this.options.isEntityFile) {
+                let entityMaker = new EntityFileGenerate(this.options, columnInfos);
+                entityMaker.generate();
+            }
+            if (this.options.isInterfaceFile) {
+                let interfaceMaker = new MapperFileGenerate(this.options, columnInfos);
+                interfaceMaker.generate();
+            }
+            if (this.options.isXmlFile) {
+                let xmlMaker = new XmlFileGenerate(this.options, columnInfos);
+                xmlMaker.generate();
+            }
+
         });
     }
 

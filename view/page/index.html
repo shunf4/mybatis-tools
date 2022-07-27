@@ -312,25 +312,25 @@
                                     <div class="row g-2">
                                         <div class="col-6">
                                             <div class=" input-group mb-3">
-                                                <label class="input-group-text" for="projectPathId">项目路径</label>
+                                                <label class="input-group-text" for="projectPathId">生成路径</label>
                                                 <input type="text" class="form-control" id="projectPathId" />
                                             </div>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <div class=" input-group mb-3">
                                                 <label class="input-group-text" for="parentPackageId">顶级包</label>
                                                 <input type="text" class="form-control" id="parentPackageId" />
                                             </div>
 
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-3">
                                             <div class=" input-group mb-3">
                                                 <label class="input-group-text" for="entityPathId">entity包</label>
                                                 <input type="text" class="form-control" id="entityPathId" />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-3">
                                             <div class="input-group mb-3">
                                                 <label class="input-group-text" for="interfacePathId">mapper接口包</label>
@@ -404,7 +404,7 @@
                                             <div class="form-check form-switch">
                                                 <label class="form-check-label" for="isUseLombokId">lombok</label>
                                                 <input class="form-check-input" type="checkbox" role="switch"
-                                                    id="isUseLombokId">
+                                                    id="isUseLombokId" checked>
                                             </div>
                                         </div>
                                         <div class="col-1">
@@ -443,6 +443,32 @@
                                         </div>
                                         <br>
                                         <br>
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <div class="row g-2">
+                                        <div class="col-2">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label" for="isEntityFileId">生成entity文件</label>
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    id="isEntityFileId" checked>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label"
+                                                    for="isInterfaceFileId">生成mapper接口</label>
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    id="isInterfaceFileId" checked>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label" for="isXmlFileId">生成mapper xml</label>
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    id="isXmlFileId" checked>
+                                            </div>
+                                        </div>
                                     </div>
                                 </li>
                                 <li class="list-group-item">
@@ -910,6 +936,10 @@
             isSwagger: document.getElementById('isSwaggerId').checked,
             isMybatisPlus: document.getElementById('isMybatisPlusId').checked,
             idType: document.getElementById('idTypeId').value,
+
+            isEntityFile: document.getElementById('isEntityFileId').checked,
+            isInterfaceFile: document.getElementById('isInterfaceFileId').checked,
+            isXmlFile: document.getElementById('isXmlFileId').checked,
         }
 
         console.log('文件生成组装参数', data);
