@@ -100,6 +100,17 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
                             }
                         }
                         break;
+                    case 'removeDbConfig':
+                        let dbConfs = vscode.workspace.getConfiguration("mybatis-tools.connections").get<Array<any>>(msg.type) || [];
+                        let confs = [];
+                        for (let db of dbConfs) {
+                            if (db.tag === msg.data.tag) {
+                                continue;
+                            }
+                            confs.push(db);
+                        }
+                        vscode.workspace.getConfiguration("mybatis-tools.connections").update(msg.type, confs);
+                        break;
                     case 'getTheme':
                         break;
                     default:

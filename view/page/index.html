@@ -244,6 +244,7 @@
                                     <th scope="col">host</th>
                                     <th scope="col">port</th>
                                     <th scope="col">jdbc-url</th>
+                                    <th scope="col">operations</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -280,6 +281,9 @@
                         </div>
                         <div class="col-1">
                             <button type="button" class="btn btn-success" onclick="saveDataType()">保存</button>
+                        </div>
+                        <div class="col-1">
+                            <button type="button" class="btn btn-primary" onclick="listDataType()">配置列表</button>
                         </div>
                     </div>
                     <table class="table" id="type-table">
@@ -477,6 +481,11 @@
                     cell.innerHTML = data[i]["port"];
                     cell = x.insertCell();
                     cell.innerHTML = data[i]["url"];
+                    cell = x.insertCell();
+                    cell.innerHTML = `<button class="btn" onclick="removeDbConfig(${i}, '${data[i]["tag"]}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg></button>`;
                 }
                 break;
             case 'dataTypeResult':
@@ -488,6 +497,11 @@
                     cell.innerHTML = showColumnTypes(data[i]["columnType"]);
                     cell = x.insertCell();
                     cell.innerHTML = showJavaTypes(data[i]["javaType"]);
+                    cell = x.insertCell();
+                    cell.innerHTML = `<button class="btn" onclick="removeDbTypeConfig(${i})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg></button>`;
                 }
                 break;
             case 'listDbEnvResult':
@@ -605,6 +619,21 @@
         }
     }
 
+    function removeDbConfig(rowNumber, tag) {
+        let tb = document.getElementById('dbConfiglist');
+        tb.deleteRow(rowNumber + 1);
+        let type = document.getElementById("nav-mysql-config-tab").ariaSelected == "true" ? "mysql" : "oracle";
+        if (tag) {
+            vscode.postMessage({
+                type: type,
+                command: "removeDbConfig",
+                data: {
+                    tag: tag
+                }
+            });
+        }
+    }
+
     function changeDbTab(type) {
         dbList(type);
     }
@@ -700,8 +729,7 @@
 
     function urlDecode(type) {
         if (type === 'mysql') {
-
-            let mysqlJdbc = document.getElementById('db_mysql_url').value;
+            let mysqlJdbc = document.getElementById('db_mysql_url').value.trim();
             let matchGroups = mysqlJdbc.match(mysqlJdbcRegex);
             if (matchGroups.length === 0) {
                 throw new Error("jdbc url错误");
@@ -724,8 +752,7 @@
             document.getElementById('db_mysql_user').value = paramMap['user'];
             document.getElementById('db_mysql_password').value = paramMap['password'];
         } else if (type === 'oracle') {
-
-            let oracleJdbc = document.getElementById('db_oracle_url').value
+            let oracleJdbc = document.getElementById('db_oracle_url').value.trim();
             let matchGroups = oracleJdbc.match(oracleJdbcRegex);
             if (matchGroups.length === 0) {
                 throw new Error("jdbc url错误");
@@ -767,6 +794,14 @@
             command: 'dataType',
             type: type
         });
+    }
+
+    function removeDbTypeConfig(rowNumber) {
+        console.log('remove row', rowNumber);
+        let typeTable = document.getElementById('type-table');
+        typeTable.deleteRow(rowNumber + 1);
+
+        saveDataType();
     }
 
     function showColumnTypes(currentType) {
