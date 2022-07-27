@@ -85,6 +85,14 @@ mybatis 框架工具集
 
 ## Release Notes
 
+### 1.0.2
+
+new features:
+
+1. 可以控制是否生成某些文件
+2. 控制是否使用mybatis-plus注解
+3. 实体类后缀自定义
+
 ### 1.0.1
 
 new features:
