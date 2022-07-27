@@ -1,3 +1,4 @@
+import { FileGenerateOption } from './../../model/FileGenerateOption';
 import * as mysql from 'mysql';
 import * as oracle from 'oracledb';
 import { ColumnInfo } from "../data/ColumnInfo";
@@ -7,7 +8,7 @@ interface DBConnector {
     connect(fn: (conn: mysql.Connection | oracle.Connection, error: Error, ...args: any[]) => void): void;
 
     /** 表字段 */
-    listColumn(tableName: string): Array<ColumnInfo> | Promise<Array<ColumnInfo>>;
+    listColumn(options: FileGenerateOption): Array<ColumnInfo> | Promise<Array<ColumnInfo>>;
 }
 
 export abstract class TcpDBConnector implements DBConnector {
@@ -23,7 +24,7 @@ export abstract class TcpDBConnector implements DBConnector {
         throw new Error("Method not implemented.");
     }
 
-    listColumn(tableName: string): Array<ColumnInfo> | Promise<Array<ColumnInfo>> {
+    listColumn(options: FileGenerateOption): Array<ColumnInfo> | Promise<Array<ColumnInfo>> {
         return [];
     }
 

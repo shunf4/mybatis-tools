@@ -77,7 +77,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
         // 添加mybatis-plus
         this.elements.set("tableName", new Element("@TableName(\"_tableName\")", ["_tableName"],
             options => [options.tableName],
-            () => true,
+            options => options.isMybatisPlus,
             () => this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableName;\n")));
 
         // ~ ------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
                 // mybatis-plus字段注释
                 let mybatisPlusElement = new Element(prefix + "@TableField(\"_columnName\")\n", ["_columnName"],
                     (_, columnInfo) => [columnInfo.columnName],
-                    () => true,
+                    () => options.isMybatisPlus,
                     () => this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableField;\n"));
 
                 let mybatisPlusIdElement = new Element(prefix + "@TableId(value = \"_columnName\", type = IdType._idType)\n", ["_columnName", '_idType'],
@@ -133,7 +133,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
                         }
                         return [columnInfo.columnName, idType];
                     },
-                    () => true,
+                    () => options.isMybatisPlus,
                     () => {
                         this.dynamicElements.imports.push("import com.baomidou.mybatisplus.annotations.TableId;\n");
                         this.dynamicElements.imports.push("import com.baomidou.mybatisplus.enums.IdType;\n");

@@ -59,7 +59,7 @@ export class FileGenerateFactory {
             throw new Error('不支持的数据库类型');
         }
         // 2. 访问数据库查询表字段
-        return connect.listColumn(this.options.tableName).then(columnInfos => {
+        return connect.listColumn(this.options).then(columnInfos => {
             console.log('字段信息', columnInfos);
             if (!columnInfos || columnInfos.length === 0) {
                 throw new Error("表字段不存在");

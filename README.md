@@ -85,6 +85,14 @@ mybatis 框架工具集
 
 ## Release Notes
 
+### 1.0.1
+
+new features:
+
+1. 默认类型映射完善。
+2. 删除功能数据库配置和类型映射功能
+3. 增加类名后缀自定义
+
 ### 1.0.0
 
 new features:

@@ -414,6 +414,20 @@
                                                     id="isSwaggerId">
                                             </div>
                                         </div>
+                                        <div class="col-2">
+                                            <div class="input-group mb-3">
+                                                <label for="classSuffixId" class="input-group-text">实体类后缀</label>
+                                                <input type="text" class="form-control" id="classSuffixId" value="EO" />
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="form-check form-switch">
+                                                <label class="form-check-label"
+                                                    for="isMybatisPlusId">实体类是否使用MybatisPlus注解</label>
+                                                <input class="form-check-input" type="checkbox" role="switch" checked
+                                                    id="isMybatisPlusId">
+                                            </div>
+                                        </div>
                                         <div class="col-3">
                                             <div class="input-group">
                                                 <label class="input-group-text" for="idTypeId">id生成类型</label>
@@ -891,8 +905,10 @@
             xmlPath: document.getElementById('xmlPathId').value,
 
             author: document.getElementById('authorId').value,
+            classSuffix: document.getElementById('classSuffixId').value,
             isUseLombok: document.getElementById('isUseLombokId').checked,
             isSwagger: document.getElementById('isSwaggerId').checked,
+            isMybatisPlus: document.getElementById('isMybatisPlusId').checked,
             idType: document.getElementById('idTypeId').value,
         }
 

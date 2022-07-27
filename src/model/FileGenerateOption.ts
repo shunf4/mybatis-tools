@@ -14,7 +14,6 @@ export class FileGenerateOption {
 
     entityPath: string = '';
     interfacePath: string = '';
-    // todo xml path
     xmlPath: string = '';
 
     // ~ ------------------------------------------------------------------------------
@@ -22,11 +21,14 @@ export class FileGenerateOption {
     // ~ ------------------------------------------------------------------------------
 
     author: string = 'auto generate';
+    classSuffix: string = 'EO';
 
     /** 如果不使用lombok 则生成getter setter */
     isUseLombok: boolean = true;
     /** 如果不使用swagger 则使用注释 */
     isSwagger: boolean = true;
+    /** 是否使用mybatis-plus注解 */
+    isMybatisPlus: boolean = true;
 
     idType: string = '';
 }

@@ -1,3 +1,4 @@
+import { FileGenerateOption } from './../../model/FileGenerateOption';
 import { underlineToHump } from '../../util/SysUtil';
 import { DataType } from './DataType';
 import { jdbcTypeMap } from './JdbcType';
@@ -24,13 +25,15 @@ export class ColumnInfo {
     fieldName: string;
 
     jdbcType: string = '';
+    options: FileGenerateOption;
 
 
-    constructor(tableName: string, columnName: string, columnType: string, dataType: DataType, isId: boolean) {
+    constructor(dataType: DataType, tableName: string, columnName: string, columnType: string, isId: boolean, options: FileGenerateOption) {
         this.tableName = tableName;
         this.columnName = columnName;
         this.columnType = columnType;
         this.isId = isId;
+        this.options = options;
         this.fieldName = this.getFieldName();
         this.className = this.getClassName();
         this.mapperName = this.getMapperName();
@@ -45,7 +48,7 @@ export class ColumnInfo {
     }
 
     getClassName(): string {
-        let word = underlineToHump(this.tableName.toLowerCase()) + "EO";
+        let word = underlineToHump(this.tableName.toLowerCase()) + (this.options.classSuffix ? this.options.classSuffix : "EO");
         return word[0].toUpperCase() + word.substring(1);
     }
 

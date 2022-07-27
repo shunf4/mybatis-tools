@@ -1,3 +1,4 @@
+import { FileGenerateOption } from './../../model/FileGenerateOption';
 import * as oracle from 'oracledb';
 import { ColumnInfo } from "../data/ColumnInfo";
 import { OracleDataType } from "../data/OracleDataType";
@@ -30,7 +31,8 @@ export class OracleConnector extends TcpDBConnector {
     }
 
 
-    async listColumn(tableName: string): Promise<Array<ColumnInfo>> {
+    async listColumn(options: FileGenerateOption): Promise<Array<ColumnInfo>> {
+        let tableName = options.tableName
         return new Promise((resolve, rejects) => {
             this.connect(conn => {
                 let sql = `select c.TABLE_NAME, c.COLUMN_NAME, c.DATA_TYPE, c.DATA_LENGTH,
@@ -45,7 +47,7 @@ export class OracleConnector extends TcpDBConnector {
                         where c.table_name = upper(:1)
                         order by c.column_id`;
                 conn.execute<any>(sql, [tableName], (error, result) => {
-                    if(!result.rows || result.rows.length === 0) {
+                    if (!result.rows || result.rows.length === 0) {
                         vscode.window.showErrorMessage(tableName + "字段不存在");
                         throw Error(tableName + "字段不存在");
                     }
@@ -61,7 +63,6 @@ export class OracleConnector extends TcpDBConnector {
                         let columnComment = String(row[7]);
                         let isId = String(row[8]) === '1';
                         let columnType = '';
-                        // todo zx 完善各种数据类型的处理和分类
                         if (['VARCHAR2'].includes(dataType)) {
                             columnType = `${dataType}(${dataLength})`;
                         } else if (['NUMBER', 'DECIMAL'].includes(dataType)) {
@@ -69,7 +70,7 @@ export class OracleConnector extends TcpDBConnector {
                         } else {
                             columnType = dataType;
                         }
-                        let columnInfo = new ColumnInfo(tableName, columnName, columnType, new OracleDataType(), isId);
+                        let columnInfo = new ColumnInfo(new OracleDataType(), tableName, columnName, columnType, isId, options);
                         columnInfo.columnComment = columnComment;
                         columnInfo.tableComment = tableComment;
                         columnInfos.push(columnInfo);

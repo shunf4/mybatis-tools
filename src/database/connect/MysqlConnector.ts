@@ -1,3 +1,4 @@
+import { FileGenerateOption } from './../../model/FileGenerateOption';
 import * as mysql from 'mysql';
 import { ColumnInfo } from "../data/ColumnInfo";
 import { MysqlDataType } from "../data/MysqlDataType";
@@ -34,8 +35,9 @@ export class MysqlConnector extends TcpDBConnector {
         }
     }
 
-    async listColumn(tableName: string): Promise<Array<ColumnInfo>> {
+    async listColumn(options: FileGenerateOption): Promise<Array<ColumnInfo>> {
         let columnInfos: ColumnInfo[] = [];
+        let tableName = options.tableName;
         return new Promise<Array<ColumnInfo>>((resolve, reject) => {
             this.connect(conn => {
                 conn.query({
@@ -58,7 +60,7 @@ export class MysqlConnector extends TcpDBConnector {
                         let tableComment = result['TABLE_COMMENT'];
                         let columnComment = result['COLUMN_COMMENT'];
                         let isId = result['IS_ID'] === '1';
-                        let columnInfo = new ColumnInfo(tableName, columnName, columnType, new MysqlDataType(), isId);
+                        let columnInfo = new ColumnInfo(new MysqlDataType(), tableName, columnName, columnType, isId, options);
                         columnInfo.tableComment = tableComment;
                         columnInfo.columnComment = columnComment;
                         columnInfos.push(columnInfo);
