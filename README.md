@@ -49,6 +49,9 @@ mybatis 框架工具集
   8. 顶级目录为绝对地址，其他为相对位置。
   9. 如果不配置顶级包，entity，mapper，xml包包名需要手动修改。
 
+  #### 关于oracle数据库连接
+  前提: 安装[oracle client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html)
+  并配置环境变量, 参考[nodejs 使用官方oracledb库连接数据库 教程](https://www.cnblogs.com/rysinal/p/7779055.html)
 
 
 ### 命令
