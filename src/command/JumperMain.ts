@@ -149,7 +149,7 @@ export class JumperMain extends BaseCommand implements Disposable {
     for (let i = lineIndex; i > 0; i--) {
       let line = document.lineAt(i);
       let words = [];
-      for (let s of line.text.split(/[\s=<>"]/)) {
+      for (let s of line.text.split(/[\s=<>"']/)) {
         if (s.length > 0) {
           words.push(s);
         }
