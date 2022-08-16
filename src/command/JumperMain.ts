@@ -6,6 +6,7 @@ import { MapperMappingContext } from "../mapping/MapperMappingContext";
 import { Constant, InterfaceDecode } from "../util/JavaDecode";
 import { AddContent } from "../model/AddContent";
 import { DocumentUtil } from "../util/DocumentUtil";
+import internal = require("stream");
 
 /**
  * 通过命令进行跳转
@@ -37,6 +38,7 @@ export class JumperMain extends BaseCommand implements Disposable {
     }
     let document = activeEditor.document;
     let word = this.findWordAroundCursor(activeEditor);
+    let key = this.findKeyBeforeCursor(activeEditor);
 
     let filePath = document.fileName;
     let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
@@ -46,17 +48,53 @@ export class JumperMain extends BaseCommand implements Disposable {
       let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(document);
       // 匹配xml中该方法位置
       if (mapperMapping.xmlPath) {
-        this.jump(mapperMapping.xmlPath, word, this.doWhenNotMatchXml);
+        this.jump(mapperMapping.xmlPath, word, "id", this.doWhenNotMatchXml);
       } else {
         vscode.window.showWarningMessage("没有对应的java接口文件!");
       }
     } else if (fileNameWithSuffix.endsWith("xml")) {
-      // 如果当前文件为xml文件
-      let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(document);
-      if (mapperMapping.javaPath) {
-        this.jump(mapperMapping.javaPath, word, this.doWhenNotMatchJava);
-      } else {
-        vscode.window.showWarningMessage("没有对应的xml文件!");
+      // 判断当前选择的是方法还是连接
+      // id type resultType parameterType resultMap parameterMap refid
+      if (key === 'id') {
+        // 如果当前文件为xml文件
+        let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(document);
+        if (mapperMapping.javaPath) {
+          // 在java文件中搜索 不应该使用key
+          this.jump(mapperMapping.javaPath, word, undefined, this.doWhenNotMatchJava);
+        } else {
+          vscode.window.showWarningMessage("没有对应的xml文件!");
+        }
+      } else if (["type", "resultType", "parameterType"].includes(key)) {
+        let wordArr = word.split(/\./);
+        if (wordArr.length === 1) {
+          // todo zx 支持别名方式
+          vscode.window.showWarningMessage("不支持别名和基础数据类型!");
+          return;
+        }
+        let files = await vscode.workspace.findFiles(Constant.getJavaPathByNamespace(word));
+        if (files.length > 0) {
+          // 在java文件中搜索 不应该使用key
+          this.jump(vscode.Uri.parse(files[0].path), wordArr[wordArr.length - 1]);
+        } else {
+          vscode.window.showWarningMessage("没有对应的类文件!");
+        }
+      } else if (["resultMap", "parameterMap", "refid"].includes(key)) {
+        let wordArr = word.split(/\./g);
+        let targetName = wordArr[wordArr.length - 1];
+        if (wordArr.length > 1) {
+          // 使用namespace
+          let namespace = word.substring(0, word.indexOf(targetName) - 1);
+          let files = await vscode.workspace.findFiles(Constant.getXmlPathByNamespace(namespace));
+          if (files.length > 0) {
+            // 在xml文件中搜索 使用id更准确
+            this.jump(vscode.Uri.parse(files[0].path), targetName, "id");
+          } else {
+            vscode.window.showWarningMessage("没有对应的xml文件!");
+          }
+        } else {
+          // 在xml文件中搜索 使用id更准确
+          this.contentMatch(document, word, "id");
+        }
       }
     }
   }
@@ -88,38 +126,107 @@ export class JumperMain extends BaseCommand implements Disposable {
     return word;
   }
 
+  findKeyBeforeCursor(activeEditor: vscode.TextEditor): string {
+    let document = activeEditor.document;
+    let curPos = activeEditor.selection.active;
+    let line = document.lineAt(curPos);
+    let word = "";
+
+    let lastEqual = line.text.lastIndexOf("=", curPos.character);
+    if (lastEqual === -1 && curPos.line > 0) {
+      // 如果当前行找不到等号则向前一行寻找
+      line = document.lineAt(curPos.line - 1);
+      lastEqual = line.text.lastIndexOf("=", curPos.character);
+    }
+    word = this.findWordBeforePosition(document, curPos.line, curPos.character);
+    return word;
+  }
+
+  /**
+   * 在指定位置之前找一个单词
+   */
+  findWordBeforePosition(document: vscode.TextDocument, lineIndex: number, curIndex?: number): string {
+    for (let i = lineIndex; i > 0; i--) {
+      let line = document.lineAt(i);
+      let words = [];
+      for (let s of line.text.split(/[\s=<>"]/)) {
+        if (s.length > 0) {
+          words.push(s);
+        }
+      }
+      if (words.length === 0) {
+        continue;
+      }
+      let lastIndex = 0;
+      if (curIndex) {
+        // 如果限制搜索范围
+        let lastSearchWord = null;
+        for (let word of words) {
+          let wordStartIndex = line.text.indexOf(word, lastIndex);
+          let wordEndIndex = wordStartIndex + word.length;
+          if (wordEndIndex >= curIndex) {
+            break;
+          } else {
+            if (word.length > 0) {
+              lastSearchWord = word;
+            }
+            lastIndex = wordEndIndex;
+          }
+        }
+        if (lastSearchWord && lastSearchWord.length > 0) {
+          return lastSearchWord;
+        } else {
+          curIndex = undefined;
+        }
+      } else {
+        return words[words.length - 1];
+      }
+    }
+    return '';
+  }
+
   /**
    * 跳转到指定文件 指定单词的位置
    * @param path
    * @param word
    * @param doWhenNotMatch
    */
-  jump(path: vscode.Uri, word: string, doWhenNotMatch?: (document: vscode.TextDocument, word: string) => Promise<void>) {
+  jump(path: vscode.Uri, word: string, key?: string, doWhenNotMatch?: (document: vscode.TextDocument, word: string) => Promise<void>) {
     vscode.workspace.openTextDocument(path).then(async (doc) => {
-      let wordIndexAtLine = -1;
-      let lineNumber = 0;
-      for (; lineNumber < doc.lineCount; lineNumber++) {
-        let lineText = doc.lineAt(lineNumber);
-        wordIndexAtLine = lineText.text.indexOf(word);
-        if (wordIndexAtLine !== -1) {
+      this.contentMatch(doc, word, key, doWhenNotMatch);
+    });
+  }
+
+  async contentMatch(doc: vscode.TextDocument, word: string, key?: string, doWhenNotMatch?: (document: vscode.TextDocument, word: string) => Promise<void>) {
+    let wordIndexAtLine = -1;
+    let lineNumber = 0;
+    for (; lineNumber < doc.lineCount; lineNumber++) {
+      let lineText = doc.lineAt(lineNumber);
+      wordIndexAtLine = lineText.text.indexOf(word);
+      if (wordIndexAtLine !== -1) {
+        if (key) {
+          let findKey = this.findWordBeforePosition(doc, lineNumber, wordIndexAtLine);
+          if (findKey === key) {
+            break;
+          }
+        } else {
           break;
         }
       }
-
-      // 没有匹配到文本
-      if (wordIndexAtLine === -1 && doWhenNotMatch) {
-        await doWhenNotMatch(doc, word);
-      } else {
-        let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
-        await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
-          // 跳转之后选中单词
-          let selectEnd = new vscode.Position(pos.line, pos.character + word.length);
-          let range = new vscode.Range(pos, selectEnd);
-          editor.selection = new vscode.Selection(pos, selectEnd);
-          editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
-        });
-      }
-    });
+    }
+    // 没有匹配到文本
+    if (wordIndexAtLine === -1 && doWhenNotMatch) {
+      await doWhenNotMatch(doc, word);
+    } else {
+      let pos = new vscode.Position(lineNumber, wordIndexAtLine === -1 ? 0 : wordIndexAtLine);
+      await vscode.window.showTextDocument(doc, 1, false).then((editor) => {
+        // 跳转之后选中单词
+        let selectEnd = new vscode.Position(pos.line, pos.character + word.length);
+        let range = new vscode.Range(pos, selectEnd);
+        editor.selection = new vscode.Selection(pos, selectEnd);
+        editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+      });
+    }
   }
 
   /**

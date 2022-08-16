@@ -17,6 +17,11 @@ mybatis 框架工具集
       - `直接跳转到文件`
       - `不跳转`
       - `创建方法或者动态sql`(创建位置为末尾)
+  4. 支持引用跳转.
+    对xml中的type resultType parameterType resultMap parameterMap refid跳转到指定位置进行支持
+    注意需要将光标放置在值上,使用快捷键.
+
+    目前只支持项目中的类, 不支持别名方式，不支持基础类型。
 
 - 日志格式化(目前支持MYSQL, ORACLE, 默认为MYSQL)  
   > 首先复制要转换的sql日志. 使用快捷键或者命令.
@@ -28,9 +33,6 @@ mybatis 框架工具集
   使用`ctrl+m ctrl+g`，打开文件生成器页面。
   在生成策略页面配置相关信息即可。
 
-  ![数据库配置](https://obohe.com/i/2022/07/23/数据库配置.png)
-  ![类型映射](https://obohe.com/i/2022/07/23/类型映射.png)
-  ![文件生成](https://obohe.com/i/2022/07/23/生成策略.png)
   
   注意：
   1. 项目路径为`/a/b/c`形式, 如果指定磁盘则需在最前面加上`/`, 如`/D:/a/b/c`
@@ -87,6 +89,15 @@ mybatis 框架工具集
 ## Known Issues
 
 ## Release Notes
+
+### 1.1.0
+
+new features:
+
+1. 对xml中的type resultType parameterType resultMap parameterMap refid跳转到指定位置进行支持  
+    注意需要将光标放置在值上,使用快捷键.
+
+    目前只支持项目中的类和xml文件, 不支持类别名，不支持基础类型。
 
 ### 1.0.2
 
