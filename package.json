@@ -4,7 +4,7 @@
     "description": "tools for mybatis",
     "icon": "images/icon.png",
     "publisher": "nikolazhang",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "repository": {
         "url": "https://gitee.com/NikolaZhang/mybatis-tools.git",
         "type": "git"

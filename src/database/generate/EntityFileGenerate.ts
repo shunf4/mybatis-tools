@@ -184,7 +184,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
 
         // 拼接imports
         let importsContent = Array.from(new Set(this.dynamicElements.imports)).sort((a, b) => a.localeCompare(b)).join("");
-        let methodsContent = this.options.isSwagger ? '' : this.dynamicElements.methods.join("");
+        let methodsContent = this.options.isUseLombok ? '' : this.dynamicElements.methods.join("");
         let className = this.columnInfos[0].className;
         let fieldContent = this.dynamicElements.fields.join("\n");
 
@@ -240,7 +240,7 @@ export class EntityFileGenerate extends BaseFileGenerate {
         let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
 
         return `
-    public void set${fieldNameUpper}(${fieldType} ${fieldName}){
+    public void set${fieldNameUpper}(${fieldType} ${fieldName}) {
         this.${fieldName} = ${fieldName};
     }
         `;

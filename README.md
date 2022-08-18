@@ -90,6 +90,12 @@ mybatis 框架工具集
 
 ## Release Notes
 
+### 1.1.1
+
+bug fix:
+
+1. 判断条件错误, 不使用lombok, 无法生成get set方法.
+
 ### 1.1.0
 
 new features:
