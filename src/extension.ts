@@ -7,6 +7,7 @@ import { JumperMain } from "./command/JumperMain";
 import { LogFormatMain } from "./command/LogFormatMain";
 import { CleanConfigMain } from './command/CleanConfigMain';
 import { FileGenerateSerializer } from './serial/FileGenerateSerializer';
+import { CodeLensMain } from './command/CodeLensMain';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -19,6 +20,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(new ConfigMain().dispose());
   // 跳转
   context.subscriptions.push(new JumperMain().dispose());
+  // CodeLens
+  context.subscriptions.push(new CodeLensMain().dispose());
   // 日志格式化
   context.subscriptions.push(new LogFormatMain().dispose());
   // 缓存清理

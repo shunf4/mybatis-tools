@@ -14,8 +14,8 @@ import internal = require("stream");
 export class JumperMain extends BaseCommand implements Disposable {
   dispose() {
     let cmd = JumperMain.getCommand("jumper");
-    return vscode.commands.registerCommand(cmd, () => {
-      this.doCommand();
+    return vscode.commands.registerCommand(cmd, (specifiedPosition) => {
+      this.doCommand(specifiedPosition);
     });
   }
 
@@ -23,8 +23,8 @@ export class JumperMain extends BaseCommand implements Disposable {
    * 执行命令
    * @returns
    */
-  async doCommand(): Promise<void> {
-    // 1. 获取光标所处的文件和方法名称
+  async doCommand(specifiedPosition?: vscode.Position): Promise<void> {
+    // 1. 获取指定位置处（或光标处）所处的文件和方法名称
     // 2. 如果是接口:
     // 2.1 获取文件名称, 当前的package, 组装namespace
     // 2.2 根据namespace获取缓存中的xml位置, 如果没有重新加载, 还是没有提示是否创建statement
@@ -37,8 +37,8 @@ export class JumperMain extends BaseCommand implements Disposable {
       return;
     }
     let document = activeEditor.document;
-    let word = this.findWordAroundCursor(activeEditor);
-    let key = this.findKeyBeforeCursor(activeEditor);
+    let word = this.findWordAroundPosition(activeEditor, specifiedPosition);
+    let key = this.findKeyBeforePosition(activeEditor, specifiedPosition);
 
     let filePath = document.fileName;
     let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
@@ -100,14 +100,14 @@ export class JumperMain extends BaseCommand implements Disposable {
   }
 
   /**
-   * 查找光标所处位置的单词
+   * 查找指定位置处（或光标处）的单词
    *
    * @param activeEditor 当前打开的文件
    * @returns
    */
-  findWordAroundCursor(activeEditor: vscode.TextEditor): string {
+  findWordAroundPosition(activeEditor: vscode.TextEditor, specifiedPosition?: vscode.Position): string {
     let document = activeEditor.document;
-    let curPos = activeEditor.selection.active;
+    let curPos = specifiedPosition ?? activeEditor.selection.active;
     let line = document.lineAt(curPos);
     let word = "";
     let pos = 0;
@@ -126,9 +126,9 @@ export class JumperMain extends BaseCommand implements Disposable {
     return word;
   }
 
-  findKeyBeforeCursor(activeEditor: vscode.TextEditor): string {
+  findKeyBeforePosition(activeEditor: vscode.TextEditor, specifiedPosition?: vscode.Position): string {
     let document = activeEditor.document;
-    let curPos = activeEditor.selection.active;
+    let curPos = specifiedPosition ?? activeEditor.selection.active;
     let line = document.lineAt(curPos);
     let word = "";
 
