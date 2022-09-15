@@ -24,7 +24,9 @@
         "onCommand:mybatis-tools.log-format",
         "onCommand:mybatis-tools.clean",
         "onCommand:mybatis-tools.generate-file",
-        "onWebviewPanel:mybatis-tools.wakeup"
+        "onWebviewPanel:mybatis-tools.wakeup",
+        "onLanguage:java",
+        "onLanguage:xml"
     ],
     "main": "./out/extension.js",
     "contributes": {
