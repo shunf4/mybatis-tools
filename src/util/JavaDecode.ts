@@ -7,11 +7,17 @@
 class InterfaceDecode {
   interface() {}
 
-  static method(javaContent: string | undefined): string[] | null {
+  static method(javaContent: string | undefined): {name: string, position: number}[] | null {
     if (javaContent === undefined) {
       return null;
     }
-    return javaContent.match(Constant.PATTERN_ABSTRACT_METHOD_NAME);
+
+    return Array.from(javaContent.matchAll(Constant.PATTERN_ABSTRACT_METHOD_NAME)).map(m => {
+      return {
+        name: m[0],
+        position: m.index || 0,
+      }
+    });
   }
 
   static package(javaContent: string | undefined): string | null {
