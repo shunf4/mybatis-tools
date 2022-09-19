@@ -1,5 +1,5 @@
-import { FileGenerateOption } from "../../model/FileGenerateOption";
-import { ColumnInfo } from "../data/ColumnInfo";
+import {FileGenerateOption} from "../../model/FileGenerateOption";
+import {ColumnInfo} from "../data/ColumnInfo";
 
 /**
  * 元素使用规则定义

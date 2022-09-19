@@ -1,6 +1,6 @@
-import { ColumnInfo } from "./../data/ColumnInfo";
-import { FileGenerateOption } from './../../model/FileGenerateOption';
-import { DynamicElements, Element } from './ElementDefine';
+import {ColumnInfo} from "../data/ColumnInfo";
+import {FileGenerateOption} from '../../model/FileGenerateOption';
+import {DynamicElements, Element} from './ElementDefine';
 import * as vscode from 'vscode';
 
 interface IFileGenerate {
@@ -58,7 +58,6 @@ export abstract class BaseFileGenerate implements IFileGenerate {
      * 内容编织
      */
     abstract weaveContent(): void;
-
 
 
     generate(): void {

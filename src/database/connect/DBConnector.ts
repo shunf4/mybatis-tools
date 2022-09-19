@@ -1,7 +1,7 @@
-import { FileGenerateOption } from './../../model/FileGenerateOption';
+import {FileGenerateOption} from '../../model/FileGenerateOption';
 import * as mysql from 'mysql';
 import * as oracle from 'oracledb';
-import { ColumnInfo } from "../data/ColumnInfo";
+import {ColumnInfo} from "../data/ColumnInfo";
 
 interface DBConnector {
     /** 连接数据库并基于连接执行操作 */

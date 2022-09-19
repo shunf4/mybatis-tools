@@ -1,15 +1,15 @@
-import { TcpDBConnector } from '../database/connect/DBConnector';
-import { MysqlConnector } from "../database/connect/MysqlConnector";
-import { OracleConnector } from "../database/connect/OracleConnector";
+import {TcpDBConnector} from '../database/connect/DBConnector';
+import {MysqlConnector} from "../database/connect/MysqlConnector";
+import {OracleConnector} from "../database/connect/OracleConnector";
 import * as vscode from "vscode";
-import { Disposable } from "vscode";
-import { BaseCommand } from "./BaseCommand";
-import { DataType } from "../database/data/DataType";
-import { OracleDataType } from "../database/data/OracleDataType";
-import { MysqlDataType } from "../database/data/MysqlDataType";
-import { FileGenerateOption } from '../model/FileGenerateOption';
-import { FileGenerateFactory } from '../database/generate/GenerateFactory';
-import { readExtentsionFile } from '../util/FileReader';
+import {Disposable} from "vscode";
+import {BaseCommand} from "./BaseCommand";
+import {DataType} from "../database/data/DataType";
+import {OracleDataType} from "../database/data/OracleDataType";
+import {MysqlDataType} from "../database/data/MysqlDataType";
+import {FileGenerateOption} from '../model/FileGenerateOption';
+import {FileGenerateFactory} from '../database/generate/GenerateFactory';
+import {readExtentsionFile} from '../util/FileReader';
 
 /**
  * 文件生成
@@ -211,7 +211,7 @@ export class GenerateFileMain extends BaseCommand implements Disposable {
         }
         let result = [];
         for (let mapping of dataType.mappings) {
-            let data = { columnType: '', javaType: '' };
+            let data = {columnType: '', javaType: ''};
             data.columnType = mapping.columnType.toString();
             data.javaType = mapping.javaType;
             result.push(data);

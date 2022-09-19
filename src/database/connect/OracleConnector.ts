@@ -1,8 +1,8 @@
-import { FileGenerateOption } from './../../model/FileGenerateOption';
+import {FileGenerateOption} from '../../model/FileGenerateOption';
 import * as oracle from 'oracledb';
-import { ColumnInfo } from "../data/ColumnInfo";
-import { OracleDataType } from "../data/OracleDataType";
-import { TcpDBConnector } from './DBConnector';
+import {ColumnInfo} from "../data/ColumnInfo";
+import {OracleDataType} from "../data/OracleDataType";
+import {TcpDBConnector} from './DBConnector';
 import * as vscode from 'vscode';
 
 /** oracle连接 */
@@ -32,7 +32,7 @@ export class OracleConnector extends TcpDBConnector {
 
 
     async listColumn(options: FileGenerateOption): Promise<Array<ColumnInfo>> {
-        let tableName = options.tableName
+        let tableName = options.tableName;
         return new Promise((resolve, rejects) => {
             this.connect(conn => {
                 let sql = `select c.TABLE_NAME, c.COLUMN_NAME, c.DATA_TYPE, c.DATA_LENGTH,

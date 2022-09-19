@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { stringToRegExp } from '../../util/RegExpUtil';
+import {stringToRegExp} from '../../util/RegExpUtil';
 
 export class DataTypeMapping {
 
@@ -81,7 +81,7 @@ export abstract class DataType {
      */
     getMappedResult(realColumnType: string): string {
         let lastLength: number = 0;
-        let lastJavaType:string = '';
+        let lastJavaType: string = '';
         for (let mapping of this.mappings) {
             if (!new RegExp(mapping.columnType).test(realColumnType)) {
                 continue;

@@ -1,5 +1,5 @@
-import { Element } from "./ElementDefine";
-import { BaseFileGenerate } from "./FileGenerate";
+import {Element} from "./ElementDefine";
+import {BaseFileGenerate} from "./FileGenerate";
 import * as vscode from 'vscode';
 
 const xmlTemplate = `
@@ -30,6 +30,7 @@ export class XmlFileGenerate extends BaseFileGenerate {
         this.elements.set("resultIdMaps", new Element(resultIdTemplate, ["_field", "_column", "_jdbcType"],
             (_, columnInfo) => [columnInfo.fieldName, columnInfo.columnName, columnInfo.jdbcType]));
     }
+
     weaveContent(): void {
         let columns: string[] = [];
         let resultMapContent = '';

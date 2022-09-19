@@ -5,51 +5,52 @@
  * 因此直接根据正则表达式进行提取。
  */
 class InterfaceDecode {
-  interface() {}
-
-  static method(javaContent: string | undefined): {name: string, position: number}[] | null {
-    if (javaContent === undefined) {
-      return null;
+    interface() {
     }
 
-    return Array.from(javaContent.matchAll(Constant.PATTERN_ABSTRACT_METHOD_NAME)).map(m => {
-      return {
-        name: m[0],
-        position: m.index || 0,
-      }
-    });
-  }
+    static method(javaContent: string | undefined): { name: string, position: number }[] | null {
+        if (javaContent === undefined) {
+            return null;
+        }
 
-  static package(javaContent: string | undefined): string | null {
-    if (javaContent === undefined) {
-      return null;
+        return Array.from(javaContent.matchAll(Constant.PATTERN_ABSTRACT_METHOD_NAME)).map(m => {
+            return {
+                name: m[0],
+                position: m.index || 0,
+            };
+        });
     }
-    let packages = javaContent.match(Constant.PATTERN_PACKAGE) || [""];
-    return packages[0];
-  }
+
+    static package(javaContent: string | undefined): string | null {
+        if (javaContent === undefined) {
+            return null;
+        }
+        let packages = javaContent.match(Constant.PATTERN_PACKAGE) || [""];
+        return packages[0];
+    }
 }
 
 export class Constant {
-  static NAME = "[\\u00C0-\\u02B8a-zA-Z_$][\\u00C0-\\u02B8a-zA-Z_$0-9]*";
-  static NAMESPACE = "[\\u00C0-\\u02B8a-zA-Z_$][\\u00C0-\\u02B8a-zA-Z_$0-9.]*";
-  static PATTERN_ABSTRACT_METHOD_NAME = new RegExp(`(?<=\\s+)(${Constant.NAME})(?=\\s*\\()`, "g");
-  static PATTERN_PACKAGE = new RegExp(`(?<=package\\s+)(${Constant.NAMESPACE})(?=\\s*;)`, "g");
-  static PATTERN_NAME = new RegExp(`${Constant.NAME}`, "g");
-  static PATTERN_CHAR = /[\u00C0-\u02B8a-zA-Z_$0-9\.]/;
-  static PATTERN_NAMESPACE = new RegExp(`(?<=namespace\\s*\\=\\s*")${Constant.NAMESPACE}(?=")`);
+    static NAME = "[\\u00C0-\\u02B8a-zA-Z_$][\\u00C0-\\u02B8a-zA-Z_$0-9]*";
+    static NAMESPACE = "[\\u00C0-\\u02B8a-zA-Z_$][\\u00C0-\\u02B8a-zA-Z_$0-9.]*";
+    static PATTERN_ABSTRACT_METHOD_NAME = new RegExp(`(?<=\\s+)(${Constant.NAME})(?=\\s*\\()`, "g");
+    static PATTERN_PACKAGE = new RegExp(`(?<=package\\s+)(${Constant.NAMESPACE})(?=\\s*;)`, "g");
+    static PATTERN_NAME = new RegExp(`${Constant.NAME}`, "g");
+    static PATTERN_CHAR = /[\u00C0-\u02B8a-zA-Z_$0-9\.]/;
+    static PATTERN_NAMESPACE = new RegExp(`(?<=namespace\\s*\\=\\s*")${Constant.NAMESPACE}(?=")`);
 
-  static PATTERN_FILE_SCAN = "**/src/main/**/*.xml";
-  static PATTERN_FILE_SCAN_BASE = "**/src/main/**/";
+    static PATTERN_FILE_SCAN = "**/src/main/**/*.xml";
+    static PATTERN_FILE_SCAN_BASE = "**/src/main/**/";
 
-  static getJavaPathByNamespace(namespace: string) : string{ 
-    let classPath = namespace.replace(/\./g, '/');
-    return "**/src/main/java/" + classPath + ".java";
-  }
+    static getJavaPathByNamespace(namespace: string): string {
+        let classPath = namespace.replace(/\./g, '/');
+        return "**/src/main/java/" + classPath + ".java";
+    }
 
-  static getXmlPathByNamespace(namespace: string): string {
-    let xmlPath = namespace.replace(/\./g, '/');
-    return "**/src/main/**/" + xmlPath + ".xml";
-  }
+    static getXmlPathByNamespace(namespace: string): string {
+        let xmlPath = namespace.replace(/\./g, '/');
+        return "**/src/main/**/" + xmlPath + ".xml";
+    }
 }
 
 // let ACCESS_FLAG = "public|private|protected";
@@ -70,4 +71,4 @@ export class Constant {
 
 // console.log(str2.replace(PATTERN_ABSTRACT_METHOD, "$1").split("\n"))
 
-export { InterfaceDecode };
+export {InterfaceDecode};

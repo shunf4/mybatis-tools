@@ -1,11 +1,11 @@
-import { FileGenerateOption } from "../../model/FileGenerateOption";
+import {FileGenerateOption} from "../../model/FileGenerateOption";
 
 import * as vscode from 'vscode';
-import { MysqlConnector } from "../connect/MysqlConnector";
-import { OracleConnector } from "../connect/OracleConnector";
-import { EntityFileGenerate } from "./EntityFileGenerate";
-import { MapperFileGenerate } from "./MapperFileGenerate";
-import { XmlFileGenerate } from "./XmlFileGenerate";
+import {MysqlConnector} from "../connect/MysqlConnector";
+import {OracleConnector} from "../connect/OracleConnector";
+import {EntityFileGenerate} from "./EntityFileGenerate";
+import {MapperFileGenerate} from "./MapperFileGenerate";
+import {XmlFileGenerate} from "./XmlFileGenerate";
 
 export class FileGenerateFactory {
     type: string;
