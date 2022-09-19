@@ -1,3 +1,4 @@
+import { XMLParser } from "fast-xml-parser";
 import { CancellationToken, CodeLens, CodeLensProvider, Disposable, languages, ProviderResult, TextDocument } from "vscode";
 import { MapperMappingContext } from "../mapping/MapperMappingContext";
 import { InterfaceDecode } from "../util/JavaDecode";
@@ -10,7 +11,7 @@ export class CodeLensMain implements Disposable, CodeLensProvider {
       [{
         scheme: 'file',
         language: 'java'
-      },{
+      }, {
         scheme: 'file',
         language: 'xml'
       }],
@@ -60,8 +61,38 @@ export class CodeLensMain implements Disposable, CodeLensProvider {
   }
 
   async provideXmlCodeLenses(document: TextDocument, token: CancellationToken): Promise<CodeLens[]> {
-    // TODO: 添加XML文件的CodeLens
-    return [];
+    // XML文件的CodeLens
+    let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(document);
+    let xmlIds = mapperMapping.xmlIds;
+    let content = document.getText();
+
+
+    let codeLensList: Array<CodeLens> = [];
+    xmlIds.forEach((method, key) => {
+      let regExp = new RegExp(`(?<=id\\s*=\\s*")${method.id}(?=")`, 'g');
+      let methodPositions = Array.from(content.matchAll(regExp)).map(m => m.index || 0);
+      for (const methodPosition of methodPositions) {
+        const wordPosition = document.positionAt(methodPosition);
+        const wordRange = document.getWordRangeAtPosition(wordPosition);
+        if (!wordRange) {
+          return null;
+        }
+
+        let cl = new CodeLens(
+          wordRange,
+          {
+            command: JumperMain.getCommand("jumper"),
+            title: 'Go to Mapper Java',
+            tooltip: 'will open specific .java file',
+            arguments: [
+              wordPosition,
+            ]
+          },
+        );
+        codeLensList.push(cl);
+      }
+    });
+    return codeLensList;
   }
 }
 

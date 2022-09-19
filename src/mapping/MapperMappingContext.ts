@@ -1,3 +1,4 @@
+import { ParameterType } from './../format/BaseParameterTypeHandler';
 import { XMLParser } from "fast-xml-parser";
 import * as vscode from "vscode";
 import { Constant, InterfaceDecode } from "../util/JavaDecode";
@@ -14,7 +15,7 @@ export class MapperMappingContext {
   private static suffixSearch = ".java";
   private static mapperMappingMap = new Map<string, MapperMapping>();
 
-  private static options = {
+  public static options = {
     attributeNamePrefix: "@_",
     attrNodeName: "attr", //default is 'false'
     textNodeName: "#text",
@@ -45,9 +46,7 @@ export class MapperMappingContext {
    * @param xmlContent xml字符串
    * @returns 返回当前文件的namespace
    */
-  static async registryMapperXmlFile(
-    file: vscode.Uri
-  ): Promise<MapperMapping | null> {
+  static async registryMapperXmlFile(file: vscode.Uri): Promise<MapperMapping | null> {
     let readData = await vscode.workspace.fs.readFile(file);
     let xmlContent = Buffer.from(readData).toString("utf8");
 
@@ -61,6 +60,7 @@ export class MapperMappingContext {
     }
     let namespace = mapperObject.mapper["@_namespace"];
     let mapperMapping = new MapperMapping(namespace);
+    mapperMapping.setXmlIds(mapperObject.mapper);
     mapperMapping.xmlPath = vscode.Uri.parse(file.path);
 
     let relativePath =
@@ -159,33 +159,46 @@ export class MapperMappingContext {
    * @param fileNameWithSuffix
    * @param namespace
    */
-  static async getMapperMappingByXmlFile(
-    document: vscode.TextDocument
-  ): Promise<MapperMapping> {
+  static async getMapperMappingByXmlFile(document: vscode.TextDocument): Promise<MapperMapping> {
     let content = document.getText();
-    let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [
-      ""
-    ])[0].trim();
-    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(
-      namespace
-    );
+    let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [""])[0].trim();
+    let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
     if (mapperMappingValue) {
       return mapperMappingValue || new MapperMapping(namespace);
     }
-    mapperMappingValue =
-      (await MapperMappingContext.registryMapperXmlFile(document.uri)) ||
-      new MapperMapping(namespace);
+    mapperMappingValue = (await MapperMappingContext.registryMapperXmlFile(document.uri)) || new MapperMapping(namespace);
     return mapperMappingValue;
   }
 
-  static async reload() {}
+  static async reload() { }
+}
+
+
+class MapperStatement {
+
+  id: string;
+  type: string;
+  text: string;
+  // todo 暂不支持
+  resultType?: string;
+  resultMap?: string;
+  parameterType?: string;
+  parameterMap?: string;
+
+  constructor(id: string, type: string, text: string) {
+    this.id = id;
+    this.type = type;
+    this.text = text;
+  }
+
 }
 
 class MapperMapping {
   namespace: string;
   xmlPath?: vscode.Uri;
   javaPath?: vscode.Uri;
-  xmlIds: string[] = [];
+  /** hold xml method(contains delete, update, insert, select,) ids */
+  xmlIds = new Map<string, MapperStatement>();
   javaIds: string[] = [];
 
   constructor(
@@ -197,6 +210,37 @@ class MapperMapping {
     this.xmlPath = xmlPath;
     this.javaPath = javaPath;
   }
+
+  /**
+   * 解析xml后,获取所有的xml的mapper 方法子节点,似乎对方法缓存未尝不可
+   */
+  public setXmlIds(mapperObject: any) {
+    // 此处mapperObject的属性值可能是[], 也可能是{}
+    let deleteList = this.toMapperStatement(mapperObject?.delete, "delete");
+    let updateList = this.toMapperStatement(mapperObject?.update, "update");
+    let insertList = this.toMapperStatement(mapperObject?.insert, "insert");
+    let selectList = this.toMapperStatement(mapperObject?.select, "select");
+
+    let methodList = [...deleteList, ...updateList, ...insertList, ...selectList];
+    for (let method of methodList) {
+      this.xmlIds.set(method.id, method);
+    }
+
+  }
+
+  private toMapperStatement(o: any, type: string): Array<MapperStatement> {
+    let methods = [];
+    if (o) {
+      methods = o instanceof Array ? o : [o];
+    }
+    let msList = [];
+    for (const m of methods) {
+      let ms = new MapperStatement(m["@_id"], type, m["#text"]);
+      msList.push(ms);
+    }
+    return msList;
+  }
+
 }
 
 // a mapper is like:
