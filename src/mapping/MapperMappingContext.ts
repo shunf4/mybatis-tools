@@ -62,8 +62,7 @@ export class MapperMappingContext {
         mapperMapping.setXmlIds(mapperObject.mapper);
         mapperMapping.xmlPath = vscode.Uri.parse(file.path);
 
-        let relativePath =
-            this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
+        let relativePath = this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
         let files = await vscode.workspace.findFiles(relativePath);
         if (files && files.length > 0) {
             mapperMapping.javaPath = files[0];
@@ -100,9 +99,7 @@ export class MapperMappingContext {
      */
     static async getMapperMapping(namespace: string): Promise<MapperMapping> {
         // 从缓存中获取
-        let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(
-            namespace
-        );
+        let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
 
         if (mapperMappingValue) {
             return mapperMappingValue;
@@ -130,15 +127,10 @@ export class MapperMappingContext {
         let packageName = InterfaceDecode.package(content);
 
         let filePath = document.fileName;
-        let fileShortName = filePath.substring(
-            filePath.lastIndexOf("\\") + 1,
-            filePath.lastIndexOf(".")
-        );
+        let fileShortName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
 
         let namespace = packageName + "." + fileShortName;
-        let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(
-            namespace
-        );
+        let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
         if (mapperMappingValue) {
             return mapperMappingValue || new MapperMapping(namespace);
         }
@@ -169,9 +161,7 @@ export class MapperMappingContext {
     }
 }
 
-
 class MapperStatement {
-
     id: string;
     type: string;
     text: string;
@@ -186,7 +176,6 @@ class MapperStatement {
         this.type = type;
         this.text = text;
     }
-
 }
 
 class MapperMapping {
@@ -197,11 +186,7 @@ class MapperMapping {
     xmlIds = new Map<string, MapperStatement>();
     javaIds: string[] = [];
 
-    constructor(
-        namespace: string,
-        xmlPath?: vscode.Uri | undefined,
-        javaPath?: vscode.Uri | undefined
-    ) {
+    constructor(namespace: string, xmlPath?: vscode.Uri | undefined, javaPath?: vscode.Uri | undefined) {
         this.namespace = namespace;
         this.xmlPath = xmlPath;
         this.javaPath = javaPath;
@@ -217,11 +202,15 @@ class MapperMapping {
         let insertList = this.toMapperStatement(mapperObject?.insert, "insert");
         let selectList = this.toMapperStatement(mapperObject?.select, "select");
 
-        let methodList = [...deleteList, ...updateList, ...insertList, ...selectList];
+        let methodList = [
+            ...deleteList,
+            ...updateList,
+            ...insertList,
+            ...selectList
+        ];
         for (let method of methodList) {
             this.xmlIds.set(method.id, method);
         }
-
     }
 
     private toMapperStatement(o: any, type: string): Array<MapperStatement> {
@@ -236,7 +225,6 @@ class MapperMapping {
         }
         return msList;
     }
-
 }
 
 // a mapper is like:
