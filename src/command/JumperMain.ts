@@ -127,15 +127,8 @@ export class JumperMain extends BaseCommand implements Disposable {
     findKeyBeforePosition(activeEditor: vscode.TextEditor, specifiedPosition?: vscode.Position): string {
         let document = activeEditor.document;
         let curPos = specifiedPosition ?? activeEditor.selection.active;
-        let line = document.lineAt(curPos);
         let word = "";
 
-        let lastEqual = line.text.lastIndexOf("=", curPos.character);
-        if (lastEqual === -1 && curPos.line > 0) {
-            // 如果当前行找不到等号则向前一行寻找
-            line = document.lineAt(curPos.line - 1);
-            lastEqual = line.text.lastIndexOf("=", curPos.character);
-        }
         word = this.findWordBeforePosition(document, curPos.line, curPos.character);
         return word;
     }

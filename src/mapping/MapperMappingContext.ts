@@ -111,7 +111,7 @@ export class MapperMappingContext {
             await MapperMappingContext.registryMapperXmlFile(file);
             mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
             if (mapperMappingValue) {
-                return mapperMappingValue || new MapperMapping(namespace);
+                return mapperMappingValue;
             }
         }
         return mapperMappingValue || new MapperMapping(namespace);
@@ -132,9 +132,9 @@ export class MapperMappingContext {
         let namespace = packageName + "." + fileShortName;
         let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
         if (mapperMappingValue) {
-            return mapperMappingValue || new MapperMapping(namespace);
+            return mapperMappingValue;
         }
-
+        
         let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_SCAN_BASE + fileShortName + ".xml");
         for (const file of files) {
             await MapperMappingContext.registryMapperXmlFile(file);
@@ -151,14 +151,12 @@ export class MapperMappingContext {
         let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [""])[0].trim();
         let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
         if (mapperMappingValue) {
-            return mapperMappingValue || new MapperMapping(namespace);
+            return mapperMappingValue;
         }
         mapperMappingValue = (await MapperMappingContext.registryMapperXmlFile(document.uri)) || new MapperMapping(namespace);
         return mapperMappingValue;
     }
 
-    static async reload() {
-    }
 }
 
 class MapperStatement {

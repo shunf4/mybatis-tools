@@ -20,9 +20,9 @@ export class CodeLensMain implements Disposable, CodeLensProvider {
     async provideCodeLenses(document: TextDocument, token: CancellationToken): Promise<CodeLens[]> {
         switch (document.languageId) {
             case 'java':
-                return await this.provideJavaCodeLenses(document, token);
+                return this.provideJavaCodeLenses(document, token);
             case 'xml':
-                return await this.provideXmlCodeLenses(document, token);
+                return this.provideXmlCodeLenses(document, token);
             default:
                 return [];
         }
