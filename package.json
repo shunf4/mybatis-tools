@@ -4,7 +4,7 @@
     "description": "tools for mybatis",
     "icon": "images/icon.png",
     "publisher": "nikolazhang",
-    "version": "1.2.0",
+    "version": "2.0.0",
     "repository": {
         "url": "https://gitee.com/NikolaZhang/mybatis-tools.git",
         "type": "git"
@@ -13,7 +13,8 @@
         "vscode": "^1.46.0"
     },
     "keywords": [
-        "mybatis"
+        "mybatis", 
+        "sql"
     ],
     "categories": [
         "Other"
@@ -23,6 +24,7 @@
         "onCommand:mybatis-tools.jumper",
         "onCommand:mybatis-tools.log-format",
         "onCommand:mybatis-tools.clean",
+        "onCommand:mybatis-tools.beautify",
         "onCommand:mybatis-tools.generate-file",
         "onWebviewPanel:mybatis-tools.wakeup",
         "onLanguage:java",
@@ -80,6 +82,10 @@
                 "key": "ctrl+m ctrl+d"
             },
             {
+                "command": "mybatis-tools.beautify",
+                "key": "ctrl+m ctrl+b"
+            },
+            {
                 "command": "mybatis-tools.generate-file",
                 "key": "ctrl+m ctrl+g"
             }
@@ -100,6 +106,10 @@
             {
                 "command": "mybatis-tools.clean",
                 "title": "清除映射关系缓存"
+            },
+            {
+                "command": "mybatis-tools.beautify",
+                "title": "sql美化"
             },
             {
                 "command": "mybatis-tools.generate-file",

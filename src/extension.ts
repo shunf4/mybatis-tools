@@ -8,6 +8,7 @@ import {CleanConfigMain} from './command/CleanConfigMain';
 import {FileGenerateSerializer} from './serial/FileGenerateSerializer';
 import {CodeLensMain} from './command/CodeLensMain';
 import {GenerateFileMain} from './command/GenerateFileMain';
+import { SqlBeautifyMain } from "./command/SqlBeautifyMain";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -28,8 +29,15 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(new CleanConfigMain().dispose());
     // 配置加载
     context.subscriptions.push(new GenerateFileMain(context).dispose());
+    
+    // sql 美化
+    context.subscriptions.push(new SqlBeautifyMain().dispose());
+
+
+
     // 状态保持
     vscode.window.registerWebviewPanelSerializer('mybatis-tools.wakeup', new FileGenerateSerializer(context));
+    // todo zx 文件更新处理
 
 
 }
