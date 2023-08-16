@@ -38,6 +38,7 @@ export class Constant {
     static PATTERN_NAMESPACE = new RegExp(`(?<=namespace\\s*\\=\\s*")${Constant.NAMESPACE}(?=")`);
 
     static PATTERN_FILE_SCAN = "**/src/main/**/*.xml";
+    static PATTERN_FILE_JAVA_AND_XML_SCAN = "{**/src/main/**/*.java,**/src/main/**/*.xml}";
     static PATTERN_FILE_SCAN_BASE = "**/src/main/**/";
 
     static getJavaPathByNamespace(namespace: string): string {

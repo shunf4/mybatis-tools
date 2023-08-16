@@ -45,7 +45,7 @@ export class MapperMappingContext {
      * @param file
      * @returns 返回当前文件的namespace
      */
-    static async registryMapperXmlFile(file: vscode.Uri): Promise<MapperMapping | null> {
+    static async registryMapperXmlFile(oChan: vscode.OutputChannel, file: vscode.Uri, preloadedJavaFileList: vscode.Uri[] | undefined): Promise<MapperMapping | null> {
         let readData = await vscode.workspace.fs.readFile(file);
         let xmlContent = Buffer.from(readData).toString("utf8");
 
@@ -62,10 +62,21 @@ export class MapperMappingContext {
         mapperMapping.setXmlIds(mapperObject.mapper);
         mapperMapping.xmlPath = vscode.Uri.parse(file.path);
 
-        let relativePath = this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
-        let files = await vscode.workspace.findFiles(relativePath);
-        if (files && files.length > 0) {
-            mapperMapping.javaPath = files[0];
+        if (preloadedJavaFileList !== undefined) {
+            const searchFileSuffix = namespace.replace(/\./g, "/") + this.suffixSearch;
+            const found = preloadedJavaFileList.find(jf => jf.path.endsWith(searchFileSuffix));
+            if (found !== undefined) {
+                mapperMapping.javaPath = found;
+            } else {
+                mapperMapping.javaPath = undefined;
+            }
+        } else {
+            let relativePath = this.prefixSearch + namespace.replace(/\./g, "/") + this.suffixSearch;
+            oChan.appendLine(`registryMapperXmlFile vscode.workspace.findFiles(${relativePath})`);
+            let files = await vscode.workspace.findFiles(relativePath);
+            if (files && files.length > 0) {
+                mapperMapping.javaPath = files[0];
+            }
         }
         MapperMappingContext.registryMapperMapping(mapperMapping);
         return mapperMapping;
@@ -97,22 +108,35 @@ export class MapperMappingContext {
      * @param namespace
      * @returns
      */
-    static async getMapperMapping(namespace: string): Promise<MapperMapping> {
+    static async getMapperMapping(context: vscode.ExtensionContext, oChan: vscode.OutputChannel, namespace: string): Promise<MapperMapping> {
         // 从缓存中获取
         let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
 
         if (mapperMappingValue) {
             return mapperMappingValue;
         }
-        // 缓存中不存在查找所有xml文件 进行匹配获取
-        // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
-        let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_SCAN);
-        for (const file of files) {
-            await MapperMappingContext.registryMapperXmlFile(file);
-            mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
-            if (mapperMappingValue) {
-                return mapperMappingValue;
+
+        if (context.globalState.get('isGlobalIndexRunning') === true) {
+            oChan.appendLine(`getMapperMapping: not scanning full because one is already running`);
+            return new MapperMapping(namespace);
+        }
+        context.globalState.update('isGlobalIndexRunning', true);
+        try {
+            // 缓存中不存在查找所有xml文件 进行匹配获取
+            // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
+            oChan.appendLine(`getMapperMapping: iterating and calling registryMapperXmlFile`);
+            let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_JAVA_AND_XML_SCAN);
+            let javaFiles = files.filter(f => f.path.endsWith(".java"));
+            let xmlFiles = files.filter(f => f.path.endsWith(".xml"));
+            for (const file of xmlFiles) {
+                await MapperMappingContext.registryMapperXmlFile(oChan, file, javaFiles);
+                mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
+                if (mapperMappingValue) {
+                    return mapperMappingValue;
+                }
             }
+        } finally {
+            context.globalState.update('isGlobalIndexRunning', undefined);
         }
         return mapperMappingValue || new MapperMapping(namespace);
     }
@@ -122,7 +146,7 @@ export class MapperMappingContext {
      * @param document
      * @returns
      */
-    static async getMapperMappingByJavaFile(document: vscode.TextDocument): Promise<MapperMapping> {
+    static async getMapperMappingByJavaFile(context: vscode.ExtensionContext, oChan: vscode.OutputChannel, document: vscode.TextDocument): Promise<MapperMapping> {
         let content = document.getText();
         let packageName = InterfaceDecode.package(content);
 
@@ -130,30 +154,23 @@ export class MapperMappingContext {
         let fileShortName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
 
         let namespace = packageName + "." + fileShortName;
-        let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
-        if (mapperMappingValue) {
-            return mapperMappingValue;
-        }
-        
-        let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_SCAN_BASE + fileShortName + ".xml");
-        for (const file of files) {
-            await MapperMappingContext.registryMapperXmlFile(file);
-        }
-        return MapperMappingContext.getMapperMapping(namespace);
+
+        return MapperMappingContext.getMapperMapping(context, oChan, namespace);
     }
 
     /**
      * 根据 xml及命名空间查找
      * @param document
      */
-    static async getMapperMappingByXmlFile(document: vscode.TextDocument): Promise<MapperMapping> {
+    static async getMapperMappingByXmlFile(oChan: vscode.OutputChannel, document: vscode.TextDocument): Promise<MapperMapping> {
         let content = document.getText();
         let namespace = (content.match(Constant.PATTERN_NAMESPACE) || [""])[0].trim();
         let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
         if (mapperMappingValue) {
             return mapperMappingValue;
         }
-        mapperMappingValue = (await MapperMappingContext.registryMapperXmlFile(document.uri)) || new MapperMapping(namespace);
+        oChan.appendLine(`getMapperMappingByXmlFile: calling registryMapperXmlFile`);
+        mapperMappingValue = (await MapperMappingContext.registryMapperXmlFile(oChan, document.uri, undefined)) || new MapperMapping(namespace);
         return mapperMappingValue;
     }
 

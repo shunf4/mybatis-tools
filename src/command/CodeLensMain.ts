@@ -1,9 +1,18 @@
+import * as vscode from "vscode";
 import {CancellationToken, CodeLens, CodeLensProvider, Disposable, languages, TextDocument} from "vscode";
 import {MapperMappingContext} from "../mapping/MapperMappingContext";
 import {InterfaceDecode} from "../util/JavaDecode";
 import {JumperMain} from "./JumperMain";
 
 export class CodeLensMain implements Disposable, CodeLensProvider {
+    context: vscode.ExtensionContext;
+    oChan: vscode.OutputChannel;
+
+    constructor({context, oChan}: {context: vscode.ExtensionContext, oChan: vscode.OutputChannel}) {
+        this.context = context;
+        this.oChan = oChan;
+    }
+
     dispose() {
         return languages.registerCodeLensProvider(
             [{
@@ -29,7 +38,8 @@ export class CodeLensMain implements Disposable, CodeLensProvider {
     }
 
     async provideJavaCodeLenses(document: TextDocument, token: CancellationToken): Promise<CodeLens[]> {
-        let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(document);
+        this.oChan.appendLine(`provideJavaCodeLenses: ${document.fileName} ${document.uri}`);
+        let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(this.context, this.oChan, document);
         if (!mapperMapping.xmlPath) {
             return [];
         }
@@ -57,8 +67,9 @@ export class CodeLensMain implements Disposable, CodeLensProvider {
     }
 
     async provideXmlCodeLenses(document: TextDocument, token: CancellationToken): Promise<CodeLens[]> {
+        this.oChan.appendLine(`provideXmlCodeLenses: ${document.fileName} ${document.uri}`);
         // XML文件的CodeLens
-        let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(document);
+        let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(this.oChan, document);
         let xmlIds = mapperMapping.xmlIds;
         let content = document.getText();
 

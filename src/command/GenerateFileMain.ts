@@ -15,12 +15,6 @@ import {readExtentsionFile} from '../util/FileReader';
  * 文件生成
  */
 export class GenerateFileMain extends BaseCommand implements Disposable {
-
-    constructor(context: vscode.ExtensionContext) {
-        super();
-        this.context = context;
-    }
-
     dispose(): any {
         let cmd = GenerateFileMain.getCommand("generate-file");
         return vscode.commands.registerCommand(cmd, () => {
