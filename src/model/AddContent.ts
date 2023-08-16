@@ -5,11 +5,11 @@ import * as vscode from "vscode";
  *
  */
 export class AddContent {
-  content: string;
-  position: vscode.Position;
+    content: string;
+    position: vscode.Position;
 
-  constructor(content: string, position: vscode.Position) {
-    this.content = content;
-    this.position = position;
-  }
+    constructor(content: string, position: vscode.Position) {
+        this.content = content;
+        this.position = position;
+    }
 }

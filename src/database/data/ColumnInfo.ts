@@ -1,7 +1,7 @@
-import { FileGenerateOption } from './../../model/FileGenerateOption';
-import { underlineToHump } from '../../util/SysUtil';
-import { DataType } from './DataType';
-import { jdbcTypeMap } from './JdbcType';
+import {FileGenerateOption} from '../../model/FileGenerateOption';
+import {underlineToHump} from '../../util/SysUtil';
+import {DataType} from './DataType';
+import {jdbcTypeMap} from './JdbcType';
 
 /**
  * 字段信息 部分字段值冗余, 为了简化结构而已

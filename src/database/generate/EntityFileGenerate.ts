@@ -1,5 +1,5 @@
-import { BaseFileGenerate } from "./FileGenerate";
-import { Element } from "./ElementDefine";
+import {BaseFileGenerate} from "./FileGenerate";
+import {Element} from "./ElementDefine";
 import * as vscode from 'vscode';
 
 
@@ -35,7 +35,7 @@ const classComment: string = `
  * 允许通过配置的方式指定模板, 模板中占位符, 以及占位符对应的取值方式
  * 提供给前端可以选择的变量名称, 之后通过变量取值
  * 允许执行编排
- * 
+ *
  * 麻烦不想做了，想法先留着
  */
 export class EntityFileGenerate extends BaseFileGenerate {
@@ -166,8 +166,8 @@ export class EntityFileGenerate extends BaseFileGenerate {
                         }
                         // get set 方法生成
                         // 如果使用lombok方式 则不生成getter setter
-                        this.dynamicElements.methods.push(this.makeGetter(columnInfo.simpleFieldType, columnInfo.fieldName));
-                        this.dynamicElements.methods.push(this.makeSetter(columnInfo.simpleFieldType, columnInfo.fieldName));
+                        this.dynamicElements.methods.push(EntityFileGenerate.makeGetter(columnInfo.simpleFieldType, columnInfo.fieldName));
+                        this.dynamicElements.methods.push(EntityFileGenerate.makeSetter(columnInfo.simpleFieldType, columnInfo.fieldName));
                     }
                 }
             }));
@@ -215,11 +215,11 @@ export class EntityFileGenerate extends BaseFileGenerate {
 
     /**
      * 生成get方法
-     * @param fieldType 
-     * @param fieldName 
-     * @returns 
+     * @param fieldType
+     * @param fieldName
+     * @returns
      */
-    private makeGetter(fieldType: string, fieldName: string) {
+    private static makeGetter(fieldType: string, fieldName: string) {
         let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
 
         return `
@@ -232,11 +232,11 @@ export class EntityFileGenerate extends BaseFileGenerate {
 
     /**
      * 生成set方法
-     * @param fieldType 
-     * @param fieldName 
-     * @returns 
+     * @param fieldType
+     * @param fieldName
+     * @returns
      */
-    private makeSetter(fieldType: string, fieldName: string) {
+    private static makeSetter(fieldType: string, fieldName: string) {
         let fieldNameUpper = fieldName.replace(fieldName.charAt(0), fieldName.charAt(0).toUpperCase());
 
         return `

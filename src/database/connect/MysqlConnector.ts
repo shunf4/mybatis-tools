@@ -1,9 +1,10 @@
-import { FileGenerateOption } from './../../model/FileGenerateOption';
+import {FileGenerateOption} from '../../model/FileGenerateOption';
 import * as mysql from 'mysql';
-import { ColumnInfo } from "../data/ColumnInfo";
-import { MysqlDataType } from "../data/MysqlDataType";
-import { TcpDBConnector } from './DBConnector';
+import {ColumnInfo} from "../data/ColumnInfo";
+import {MysqlDataType} from "../data/MysqlDataType";
+import {TcpDBConnector} from './DBConnector';
 import * as vscode from 'vscode';
+
 /** mysql连接 */
 
 export class MysqlConnector extends TcpDBConnector {
@@ -38,7 +39,7 @@ export class MysqlConnector extends TcpDBConnector {
     async listColumn(options: FileGenerateOption): Promise<Array<ColumnInfo>> {
         let columnInfos: ColumnInfo[] = [];
         let tableName = options.tableName;
-        return new Promise<Array<ColumnInfo>>((resolve, reject) => {
+        return new Promise<Array<ColumnInfo>>((resolve) => {
             this.connect(conn => {
                 conn.query({
                     sql: `SELECT c.TABLE_SCHEMA, c.TABLE_NAME, c.COLUMN_NAME, c.COLUMN_TYPE, t.TABLE_COMMENT, c.COLUMN_COMMENT, (case c.COLUMN_KEY when 'PRI' then '1' else '0' end) IS_ID

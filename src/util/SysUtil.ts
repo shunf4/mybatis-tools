@@ -5,8 +5,8 @@ export const sleep = (ms: number) => {
 
 /**
  * 下划线转驼峰
- * @param word 
- * @returns 
+ * @param word
+ * @returns
  */
 export const underlineToHump = (word: string) => {
     let res = '';

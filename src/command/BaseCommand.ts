@@ -1,12 +1,18 @@
 import * as vscode from "vscode";
 
 export abstract class BaseCommand {
-  context!: vscode.ExtensionContext;
-  public static pluginName = "mybatis-tools";
+    context: vscode.ExtensionContext;
+    oChan: vscode.OutputChannel;
+    public static pluginName = "mybatis-tools";
 
-  public static getCommand(shortName: string): string {
-    return this.pluginName + "." + shortName;
-  }
+    constructor({context, oChan}: {context: vscode.ExtensionContext, oChan: vscode.OutputChannel}) {
+        this.context = context;
+        this.oChan = oChan;
+    }
 
-  abstract doCommand(): void;
+    public static getCommand(shortName: string): string {
+        return this.pluginName + "." + shortName;
+    }
+
+    abstract doCommand(): void;
 }

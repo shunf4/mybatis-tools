@@ -1,5 +1,5 @@
-import { Element } from "./ElementDefine";
-import { BaseFileGenerate } from "./FileGenerate";
+import {Element} from "./ElementDefine";
+import {BaseFileGenerate} from "./FileGenerate";
 import * as vscode from 'vscode';
 
 const mapperInterface = `

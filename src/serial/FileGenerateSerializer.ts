@@ -1,15 +1,8 @@
 import * as vscode from 'vscode';
-import { BaseCommand } from '../command/BaseCommand';
-import { readExtentsionFile } from '../util/FileReader';
+import {BaseCommand} from '../command/BaseCommand';
+import {readExtentsionFile} from '../util/FileReader';
 
 export class FileGenerateSerializer extends BaseCommand implements vscode.WebviewPanelSerializer {
-
-    constructor(context: vscode.ExtensionContext) {
-        super();
-        this.context = context;
-    }
-
-
     doCommand(): void {
         throw new Error('Method not implemented.');
     }

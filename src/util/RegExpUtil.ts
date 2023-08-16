@@ -1,15 +1,14 @@
-
 /**
  * 保留原始格式的字符串化
- * @param reg 
+ * @param reg
  */
 export const regExpToString = (reg: RegExp): string => reg.toString();
 
 
 /**
- * 
+ *
  * @param regStr 将字符串形式的正则表达式转换为正则类型
- * @returns 
+ * @returns
  */
 export const stringToRegExp = (regStr: string): RegExp => {
 
