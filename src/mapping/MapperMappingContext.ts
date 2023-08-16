@@ -150,8 +150,8 @@ export class MapperMappingContext {
         let content = document.getText();
         let packageName = InterfaceDecode.package(content);
 
-        let filePath = document.fileName;
-        let fileShortName = filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.lastIndexOf("."));
+        let filePath = document.uri.path;
+        let fileShortName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
 
         let namespace = packageName + "." + fileShortName;
 

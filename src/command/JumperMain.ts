@@ -38,8 +38,8 @@ export class JumperMain extends BaseCommand implements Disposable {
         let word = this.findWordAroundPosition(activeEditor, specifiedPosition);
         let key = this.findKeyBeforePosition(activeEditor, specifiedPosition);
 
-        let filePath = document.fileName;
-        let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
+        let filePath = document.uri.path;
+        let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("/") + 1);
 
         if (fileNameWithSuffix.endsWith("java")) {
             // 如果当前为java文件
