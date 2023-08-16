@@ -86,7 +86,7 @@ export class LogFormatMain extends BaseCommand implements Disposable {
         let sqls: string[] = [];
         for (let [index, dynamicSql] of dynamicSqls.entries()) {
             let symbolCount = dynamicSqlSymbolCount[index];
-            if (dynamicSqlSymbolCount[index] <= 0) {
+            if (dynamicSqlSymbolCount[index].valueOf() <= 0) {
                 sqls.push(dynamicSql);
                 continue;
             }
