@@ -4,7 +4,7 @@
     "description": "tools for mybatis",
     "icon": "images/icon.png",
     "publisher": "nikolazhang",
-    "version": "1.1.1",
+    "version": "1.1.1-1-shunf4-mod",
     "repository": {
         "url": "https://gitee.com/NikolaZhang/mybatis-tools.git",
         "type": "git"
