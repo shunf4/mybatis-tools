@@ -38,12 +38,12 @@ export class JumperMain extends BaseCommand implements Disposable {
         let word = this.findWordAroundPosition(activeEditor, specifiedPosition);
         let key = this.findKeyBeforePosition(activeEditor, specifiedPosition);
 
-        let filePath = document.fileName;
-        let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("\\") + 1);
+        let filePath = document.uri.path;
+        let fileNameWithSuffix = filePath.substring(filePath.lastIndexOf("/") + 1);
 
         if (fileNameWithSuffix.endsWith("java")) {
             // 如果当前为java文件
-            let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(document);
+            let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(this.context, this.oChan, document);
             // 匹配xml中该方法位置
             if (mapperMapping.xmlPath) {
                 this.jump(mapperMapping.xmlPath, word, "id", this.doWhenNotMatchXml);
@@ -55,7 +55,7 @@ export class JumperMain extends BaseCommand implements Disposable {
             // id type resultType parameterType resultMap parameterMap refid
             if (key === 'id') {
                 // 如果当前文件为xml文件
-                let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(document);
+                let mapperMapping = await MapperMappingContext.getMapperMappingByXmlFile(this.oChan, document);
                 if (mapperMapping.javaPath) {
                     // 在java文件中搜索 不应该使用key
                     this.jump(mapperMapping.javaPath, word, undefined, this.doWhenNotMatchJava);
@@ -69,6 +69,8 @@ export class JumperMain extends BaseCommand implements Disposable {
                     vscode.window.showWarningMessage("不支持别名和基础数据类型!");
                     return;
                 }
+                
+                this.oChan.appendLine(`JumperMain.doCommand vscode.workspace.findFiles(${Constant.getJavaPathByNamespace(word)})`);
                 let files = await vscode.workspace.findFiles(Constant.getJavaPathByNamespace(word));
                 if (files.length > 0) {
                     // 在java文件中搜索 不应该使用key
