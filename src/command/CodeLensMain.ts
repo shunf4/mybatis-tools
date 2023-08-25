@@ -3,14 +3,17 @@ import {CancellationToken, CodeLens, CodeLensProvider, Disposable, languages, Te
 import {MapperMappingContext} from "../mapping/MapperMappingContext";
 import {InterfaceDecode} from "../util/JavaDecode";
 import {JumperMain} from "./JumperMain";
+import { ActivationState } from "../model/ActivationState";
 
 export class CodeLensMain implements Disposable, CodeLensProvider {
     context: vscode.ExtensionContext;
+    activationState: ActivationState;
     oChan: vscode.OutputChannel;
 
-    constructor({context, oChan}: {context: vscode.ExtensionContext, oChan: vscode.OutputChannel}) {
+    constructor({context, activationState}: {context: vscode.ExtensionContext, activationState: ActivationState}) {
         this.context = context;
-        this.oChan = oChan;
+        this.activationState = activationState;
+        this.oChan = activationState.oChan;
     }
 
     dispose() {
@@ -39,7 +42,7 @@ export class CodeLensMain implements Disposable, CodeLensProvider {
 
     async provideJavaCodeLenses(document: TextDocument, token: CancellationToken): Promise<CodeLens[]> {
         this.oChan.appendLine(`provideJavaCodeLenses: ${document.fileName} ${document.uri}`);
-        let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(this.context, this.oChan, document);
+        let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(this.context, this.activationState, this.oChan, document);
         if (!mapperMapping.xmlPath) {
             return [];
         }

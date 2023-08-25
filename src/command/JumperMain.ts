@@ -43,7 +43,7 @@ export class JumperMain extends BaseCommand implements Disposable {
 
         if (fileNameWithSuffix.endsWith("java")) {
             // 如果当前为java文件
-            let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(this.context, this.oChan, document);
+            let mapperMapping = await MapperMappingContext.getMapperMappingByJavaFile(this.context, this.activationState, this.oChan, document);
             // 匹配xml中该方法位置
             if (mapperMapping.xmlPath) {
                 this.jump(mapperMapping.xmlPath, word, "id", this.doWhenNotMatchXml);
