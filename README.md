@@ -2,8 +2,6 @@
 
 mybatis 框架工具集
 
-> 虽然我建议你优先选择`MybatisX`这个插件, 但是我使用的时候, 感觉不好用, 然后我就写了这款插件.
-
 ## Features
 
 ### 方法跳转
@@ -16,7 +14,7 @@ a. 当光标位于`接口方法`或者`statement id`上，使用快捷键或命�
 b. mapper接口和xml有跳转提示（`go to Mapper XML`, `go to Mapper java`），点击即可跳转。（感谢`shunf4`同学的pr. ^_^）  
 c. 不存在对应的java方法, 或者动态sql, 允许自动创建.  
     此时会提示三种选项:  
-    
+
 - 直接跳转到文件
 - 不跳转
 - 创建方法或者动态sql（创建位置为末尾）
@@ -36,7 +34,7 @@ c. 支持引用跳转
 
 **注意：**  
 
-复制的日志必须包含：`Preparing:`, `Parameters:`。 
+复制的日志必须包含：`Preparing:`, `Parameters:`。
 
 ### 文件生成器
 
@@ -45,7 +43,6 @@ c. 支持引用跳转
 1. 使用`ctrl+m ctrl+g`，打开文件生成器页面。  
 2. 在生成策略页面按需配置即可。注意需要先配置数据库信息。
 
-  
 **注意：**  
 
 1. 项目路径为`/a/b/c`形式, 如果指定磁盘则需在最前面加上`/`, 如`/D:/a/b/c`。
@@ -71,16 +68,14 @@ oracle的连接需要借助jdk才可以运行，因此需要你本地安装客�
 前提：安装[oracle client](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html)
 并配置环境变量, 参考[nodejs 使用官方oracledb库连接数据库 教程](https://www.cnblogs.com/rysinal/p/7779055.html)
 
-
 ### 缓存
 
 > 缓存不是用户必须操作的项目。
 
-**关于缓存的使用：** 
+**关于缓存的使用：**  
 
 a. 当调整文件位置、变更接口文件名、命名空间后，应该要清理缓存的映射文件位置。（ctrl+m ctrl+c）  
 b. 会加载项目中所有的映射关系，用于跳转时加速查找映射。（ctrl+m ctrl+d）
-
 
 ## 命令
 
@@ -115,6 +110,11 @@ b. 会加载项目中所有的映射关系，用于跳转时加速查找映射�
 ## Known Issues
 
 ## Release Notes
+
+### 1.3.0
+
+1. 全局mapper映射索引减少findFiles调用量，调用过程加锁
+2. 跳转文件识别适配Unix系统的正斜杠“/”
 
 ### 1.2.0
 
@@ -157,6 +157,7 @@ new features:
 ### 1.0.0
 
 new features:
+
 1. 支持生成数据库表对应的实体类，xml，mapper接口文件
 2. 通过webview页面进行交互。（命令ctrl+m, ctrl+g）
 3. 支持自定义生成文件中元素内容。（目前支持lombok, swagger）
@@ -168,6 +169,7 @@ new features:
 9. 支持内网环境使用。
 
 todo:
+
 1. 更多连接方式支持（目前只支持账号密码方式）
 2. 默认类型映射完善。
 3. 删除功能（目前删除配置只能在配置文件中删除）
@@ -175,6 +177,7 @@ todo:
 ### 0.0.6
 
 bug fix:
+
 1. 修复参数中含有空字符时，会将类型作为参数的问题。
 
 ### 0.0.5

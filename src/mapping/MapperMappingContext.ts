@@ -1,6 +1,7 @@
 import {XMLParser} from "fast-xml-parser";
 import * as vscode from "vscode";
 import {Constant, InterfaceDecode} from "../util/JavaDecode";
+import { ActivationState } from "../model/ActivationState";
 
 /**
  * <p>mapper mapping 上下文
@@ -108,7 +109,7 @@ export class MapperMappingContext {
      * @param namespace
      * @returns
      */
-    static async getMapperMapping(context: vscode.ExtensionContext, oChan: vscode.OutputChannel, namespace: string): Promise<MapperMapping> {
+    static async getMapperMapping(context: vscode.ExtensionContext, activationState: ActivationState, oChan: vscode.OutputChannel, namespace: string): Promise<MapperMapping> {
         // 从缓存中获取
         let mapperMappingValue = MapperMappingContext.mapperMappingMap.get(namespace);
 
@@ -116,11 +117,12 @@ export class MapperMappingContext {
             return mapperMappingValue;
         }
 
-        if (context.globalState.get('isGlobalIndexRunning') === true) {
-            oChan.appendLine(`getMapperMapping: not scanning full because one is already running`);
+        const currMapperIndexRunInstance = activationState.currMapperIndexRunInstance;
+        if (currMapperIndexRunInstance !== undefined) {
+            oChan.appendLine(`getMapperMapping: not scanning full because one is already running: ${currMapperIndexRunInstance}`);
             return new MapperMapping(namespace);
         }
-        context.globalState.update('isGlobalIndexRunning', true);
+        activationState.currMapperIndexRunInstance = 'MapperMappingContext.getMapperMapping: ' + new Date().toUTCString() + '\n' + (new Error().stack ?? '');
         try {
             // 缓存中不存在查找所有xml文件 进行匹配获取
             // 如果你的文件名称.java 与 .xml相同我们会通过getMapperMappingByOtherFile进行获取
@@ -136,7 +138,7 @@ export class MapperMappingContext {
                 }
             }
         } finally {
-            context.globalState.update('isGlobalIndexRunning', undefined);
+            activationState.currMapperIndexRunInstance = undefined;
         }
         return mapperMappingValue || new MapperMapping(namespace);
     }
@@ -146,7 +148,7 @@ export class MapperMappingContext {
      * @param document
      * @returns
      */
-    static async getMapperMappingByJavaFile(context: vscode.ExtensionContext, oChan: vscode.OutputChannel, document: vscode.TextDocument): Promise<MapperMapping> {
+    static async getMapperMappingByJavaFile(context: vscode.ExtensionContext, activationState: ActivationState, oChan: vscode.OutputChannel, document: vscode.TextDocument): Promise<MapperMapping> {
         let content = document.getText();
         let packageName = InterfaceDecode.package(content);
 
@@ -155,7 +157,7 @@ export class MapperMappingContext {
 
         let namespace = packageName + "." + fileShortName;
 
-        return MapperMappingContext.getMapperMapping(context, oChan, namespace);
+        return MapperMappingContext.getMapperMapping(context, activationState, oChan, namespace);
     }
 
     /**

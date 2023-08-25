@@ -25,13 +25,14 @@ export class ConfigMain extends BaseCommand implements Disposable {
         // 5. 将namespace作为键, 接口,xml路径作为值, 保存到上下文.
         vscode.window.showInformationMessage("正在加载mapper映射关系...");
 
-        if (this.context.globalState.get('isGlobalIndexRunning') === true) {
+        const currMapperIndexRunInstance = this.activationState.currMapperIndexRunInstance;
+        if (currMapperIndexRunInstance !== undefined) {
             vscode.window.showWarningMessage(
-                "映射集之前已在加载，本次不再加载"
+                `映射集之前已在加载：${currMapperIndexRunInstance}，本次不再加载`
             );
             return;
         }
-        this.context.globalState.update('isGlobalIndexRunning', true);
+        this.activationState.currMapperIndexRunInstance = 'ConfigMain.doCommand: ' + new Date().toUTCString();
         try {
             // basePath = src/main/java/com/cpic/partmanage/dataManage/mapper
             let files = await vscode.workspace.findFiles(Constant.PATTERN_FILE_JAVA_AND_XML_SCAN);
@@ -44,7 +45,7 @@ export class ConfigMain extends BaseCommand implements Disposable {
                 await MapperMappingContext.registryMapperXmlFile(this.oChan, file, javaFiles);
             }
         } finally {
-            this.context.globalState.update('isGlobalIndexRunning', undefined);
+            this.activationState.currMapperIndexRunInstance = undefined;
         }
         await MapperMappingContext.printMapperMappingMap();
         vscode.window.showInformationMessage(
